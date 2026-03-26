@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Russian Reading Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1410;--paper:#f5f0e8;--p2:#ede6d6;
+  --gold:#c8922a;--gl:#e8b84b;
+  --red:#8b2020;--green:#1e5c2e;--blue:#1a3a6b;
+  --orange:#b05010;--orange-l:#e87030;
+  --muted:#7a6f60;--card:#faf7f2;--border:#d4c9b0;
+}
+body{background:var(--paper);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;min-height:100vh}
+.app{max-width:880px;margin:0 auto;padding:0 14px 60px}
+.header{text-align:center;padding:26px 0 18px;border-bottom:2px solid var(--border);margin-bottom:22px}
+.eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.header h1{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,38px);line-height:1.1;margin-bottom:6px}
+.header h1 span{color:var(--gold)}
+.header-sub{font-size:13px;color:var(--muted);font-style:italic}
+.nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.nav-btn{padding:7px 11px;border:1.5px solid var(--border);background:var(--card);color:var(--muted);border-radius:2px;cursor:pointer;font-family:'Source Serif 4',serif;font-size:11px;transition:all .18s;display:flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent;user-select:none}
+.nav-btn:hover{border-color:var(--gold);color:var(--ink)}
+.nav-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.nav-btn.run-tab{border-color:var(--red);color:var(--red)}
+.nav-btn.run-tab.active{background:var(--red);color:#fff;border-color:var(--red)}
+.module{display:none}.module.active{display:block}
+.level-bar{display:flex;gap:6px;margin-bottom:18px;align-items:center;flex-wrap:wrap}
+.level-bar label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:4px}
+.lbtn{padding:5px 14px;border:1.5px solid var(--border);background:none;border-radius:20px;font-size:12px;cursor:pointer;font-family:'Source Serif 4',serif;color:var(--muted);transition:all .15s}
+.lbtn.l1.on{background:var(--green);color:#fff;border-color:var(--green)}
+.lbtn.l2.on{background:#7a5000;color:#fff;border-color:#7a5000}
+.lbtn.l3.on{background:var(--red);color:#fff;border-color:var(--red)}
+.stage{background:var(--ink);border-radius:6px;padding:32px 20px;text-align:center;margin-bottom:18px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stage-cyr{font-family:'Playfair Display',serif;color:var(--gl);line-height:1.1}
+.stage-sub{font-size:12px;color:rgba(255,255,255,.35);margin-top:8px;font-style:italic}
+.stage-roman{font-size:16px;letter-spacing:2px;color:var(--gl);margin-top:6px;font-weight:600}
+.stage-en{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px;font-style:italic}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.hear-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;border:1.5px solid var(--gold);background:#fff9ee;border-radius:20px;cursor:pointer;font-size:13px;color:var(--gold);font-family:'Source Serif 4',serif;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.hear-btn:hover,.hear-btn.on{background:var(--gold);color:#fff}
+.mic-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;border:2px solid var(--orange);background:#fff5ee;border-radius:20px;cursor:pointer;font-size:13px;color:var(--orange);font-family:'Source Serif 4',serif;font-weight:600;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.mic-btn:hover{background:var(--orange);color:#fff}
+.mic-btn.active{background:var(--orange);color:#fff;animation:micPulse .7s ease-in-out infinite}
+@keyframes micPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.75;transform:scale(.97)}}
+.hint-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;border:1.5px dashed var(--border);background:none;border-radius:20px;cursor:pointer;font-size:12px;color:var(--muted);font-family:'Source Serif 4',serif;transition:all .15s}
+.hint-btn:hover{border-color:var(--gold);color:var(--gold)}
+.mic-result{padding:12px 15px;border-radius:4px;font-size:14px;line-height:1.6;margin-top:6px}
+.mic-result.great{background:#e8f7ee;border:1.5px solid var(--green);color:var(--green)}
+.mic-result.close{background:#fff9ee;border:1.5px solid var(--gold);color:#7a5000}
+.mic-result.miss{background:#ffeaea;border:1.5px solid var(--red);color:var(--red)}
+.mic-score{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;display:inline-block;margin-right:8px}
+.mic-heard{font-size:12px;opacity:.8;margin-top:3px}
+.nav-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.nav-ctr{font-size:12px;color:var(--muted);flex:1;text-align:center}
+.btn{padding:8px 18px;border:2px solid;border-radius:2px;cursor:pointer;font-family:'Source Serif 4',serif;font-size:13px;transition:all .15s;font-weight:600;-webkit-tap-highlight-color:transparent}
+.btn-ink{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn-ink:hover{background:#2d2418}
+.btn-out{background:none;color:var(--ink);border-color:var(--border)}
+.btn-out:hover{border-color:var(--gold);color:var(--gold)}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:5px 13px;font-size:12px}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-ghost{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;font-family:'Source Serif 4',serif;padding:4px 0}
+.pbar-wrap{width:100%;background:var(--border);height:3px;border-radius:2px;margin-bottom:5px}
+.pbar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s}
+.ctr{font-size:11px;color:var(--muted);text-align:right;margin-bottom:8px}
+.stitle{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px}
+.sdesc{font-size:13px;color:var(--muted);margin-bottom:16px;font-style:italic;line-height:1.5}
+.info-box{background:var(--p2);border-radius:3px;padding:11px 14px;margin-bottom:14px;font-size:13px;line-height:1.6}
+/* letter grid */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:7px;margin-bottom:16px}
+.lcard{background:var(--card);border:1.5px solid var(--border);border-radius:3px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.lcard:hover,.lcard.sel{border-color:var(--gold);background:#fff9ee}
+.lcard.done{border-color:var(--green);background:#f0fbf4}
+.lcard-cyr{font-family:'Playfair Display',serif;font-size:26px;line-height:1}
+.lcard-rom{font-size:10px;color:var(--gold);font-weight:600;margin-top:2px}
+.lcard-chk{font-size:10px;color:var(--green);margin-top:1px}
+/* flash timer */
+.ftbar-wrap{width:100%;background:rgba(255,255,255,.08);height:5px;border-radius:3px;overflow:hidden;margin-bottom:18px}
+.ftbar{height:100%;background:var(--gl);border-radius:3px}
+.ftbar.red{background:#ff5555}
+/* run */
+.run-bg{background:linear-gradient(160deg,#1a0e08,#0e0804);border-radius:6px;padding:22px 18px;min-height:200px}
+.run-title{font-family:'Playfair Display',serif;color:var(--gl);font-size:28px;text-align:center;margin-bottom:4px}
+.run-sub{color:rgba(255,255,255,.4);font-size:12px;text-align:center;margin-bottom:20px;font-style:italic}
+.run-hud{display:flex;gap:14px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.run-avg{font-family:'Playfair Display',serif;font-size:22px;color:var(--gl)}
+.run-streak{font-size:13px;color:rgba(255,255,255,.5)}.run-streak strong{color:var(--orange-l)}
+.run-num{font-size:11px;color:rgba(255,255,255,.3);margin-left:auto}
+.run-stage{background:rgba(255,255,255,.05);border:1px solid rgba(255,165,40,.15);border-radius:4px;padding:22px 16px;text-align:center;margin-bottom:14px}
+.run-cyr{font-family:'Playfair Display',serif;font-size:clamp(28px,7vw,52px);color:#fff;line-height:1.2;margin-bottom:6px}
+.run-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,165,40,.5);margin-bottom:10px}
+.run-result{margin-top:10px;font-size:13px;padding:8px 12px;border-radius:3px}
+.run-result.great{background:rgba(30,92,46,.3);color:#6ddb88}
+.run-result.close{background:rgba(180,120,0,.25);color:#ffc060}
+.run-result.miss{background:rgba(139,32,32,.3);color:#ff7070}
+.run-next{display:block;width:100%;padding:10px;background:var(--orange-l);border:none;border-radius:3px;cursor:pointer;font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;color:#fff;margin-top:10px;transition:background .15s}
+.run-next:hover{background:#d06020}
+.run-mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:18px}
+.run-mc{padding:14px 12px;border:1.5px solid rgba(255,165,40,.25);border-radius:4px;cursor:pointer;background:rgba(255,255,255,.04);text-align:center;transition:all .15s}
+.run-mc:hover{border-color:var(--orange-l);background:rgba(255,107,43,.08)}
+.run-mc-icon{font-size:24px;margin-bottom:5px}
+.run-mc-label{color:var(--gl);font-size:13px;font-weight:600;margin-bottom:3px}
+.run-mc-desc{color:rgba(255,255,255,.4);font-size:11px;line-height:1.4}
+.run-grade{font-family:'Playfair Display',serif;font-size:72px;margin-bottom:4px;text-align:center}
+.run-final-score{color:var(--gl);font-size:24px;font-weight:600;margin-bottom:8px;text-align:center}
+.run-final-sub{color:rgba(255,255,255,.45);font-size:13px;margin-bottom:16px;text-align:center}
+.done-wrap{text-align:center;padding:36px 16px}
+.done-star{font-size:48px;margin-bottom:12px}
+.done-title{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:10px}
+/* local-url banner */
+.local-banner{background:linear-gradient(135deg,#2a1000,#1a0800);border:1.5px solid var(--orange);border-radius:6px;padding:16px 18px;margin-bottom:20px}
+.local-banner-title{font-family:'Playfair Display',serif;color:var(--gl);font-size:15px;margin-bottom:8px}
+.local-banner-body{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:12px}
+.local-steps{list-style:none;margin:0;padding:0}
+.local-steps li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:rgba(255,255,255,.65);line-height:1.5}
+.local-steps li:last-child{border-bottom:none}
+.ls-num{background:var(--orange);color:#fff;border-radius:50%;width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:1px}
+.ls-code{background:rgba(0,0,0,.4);padding:1px 6px;border-radius:3px;color:#ffc060;font-family:monospace;font-size:12px}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+/* ultra mode — timer bar and combo flash */
+.ultra-timer-wrap{width:100%;background:rgba(255,255,255,.08);height:5px;border-radius:3px;overflow:hidden;margin-bottom:14px}
+.ultra-timer-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--gl));transition:width 1s linear}
+.ultra-timer-bar.warn{background:#cc2200;animation:timerWarn .5s ease-in-out infinite}
+@keyframes timerWarn{0%,100%{opacity:1}50%{opacity:.45}}
+.combo-flash{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:60px;color:var(--gl);text-shadow:0 0 30px rgba(200,146,42,.8);pointer-events:none;animation:comboAnim .8s ease forwards;z-index:999}
+@keyframes comboAnim{0%{opacity:1;transform:translate(-50%,-60%)}100%{opacity:0;transform:translate(-50%,-110%)}}
+@media(max-width:480px){.lgrid{grid-template-columns:repeat(auto-fill,minmax(58px,1fr))}.run-mgrid{grid-template-columns:1fr}.controls{gap:6px}}
+/* Inline translation box */
+.trans-box{background:var(--p2);border:1.5px solid var(--border);border-radius:3px;padding:10px 14px;margin-top:10px}
+.trans-box-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.trans-box-text{font-family:'Source Serif 4',Georgia,serif;font-size:14px;color:var(--ink);font-style:italic;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">Reading Fluency Course</div>
+    <h1>Speaking <span>Russian</span></h1>
+    <div class="header-sub">See Cyrillic — produce the sound — check with your voice</div>
+  </div>
+  <nav class="nav" id="nav"></nav>
+  <div id="modules"></div>
+</div>
+
+<script>
+// ── TTS ───────────────────────────────────────────────────────────────────────
+var _vx=[],_vok=false;
+function _lv(){var v=window.speechSynthesis?window.speechSynthesis.getVoices():[];if(v.length){_vx=v;_vok=true;}}
+if(window.speechSynthesis){_lv();window.speechSynthesis.onvoiceschanged=_lv;var _vt=setInterval(function(){_lv();if(_vok)clearInterval(_vt);},200);setTimeout(function(){clearInterval(_vt);},5000);}
+function _ru(){return _vx.find(function(v){return v.lang==='ru-RU';})||_vx.find(function(v){return v.lang.startsWith('ru');})||null;}
+function say(txt,rate){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();setTimeout(function(){var u=new SpeechSynthesisUtterance(txt);u.lang='ru-RU';u.rate=rate||0.85;u.pitch=1;var r=_ru();if(r)u.voice=r;window.speechSynthesis.speak(u);},55);}
+function hearBtn(txt,rate,lbl){
+  var b=document.createElement('button');
+  b.className='hear-btn';
+  b.innerHTML='🔊 '+(lbl||'Hear');
+  var _playing=false;
+  var _endTimer=null;
+  function _markDone(){
+    _playing=false;
+    if(_endTimer){clearTimeout(_endTimer);_endTimer=null;}
+    b.classList.remove('on');
+  }
+  b.onclick=function(e){
+    e.stopPropagation();
+    if(_playing){
+      // Currently playing — stop it
+      window.speechSynthesis.cancel();
+      _markDone();
+      return;
+    }
+    // Not playing — start (or restart)
+    _playing=true;
+    b.classList.add('on');
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      var u=new SpeechSynthesisUtterance(txt);
+      u.lang='ru-RU';u.rate=rate||0.85;u.pitch=1;
+      var r=_ru();if(r)u.voice=r;
+      u.onend=function(){_markDone();};
+      u.onerror=function(){_markDone();};
+      // Fallback timeout in case onend never fires (some Android browsers)
+      var estMs=Math.max(2000,txt.length*(rate?800/rate:940))+800;
+      _endTimer=setTimeout(_markDone,estMs);
+      window.speechSynthesis.speak(u);
+    },55);
+  };
+  return b;
+}
+
+// ── STT ───────────────────────────────────────────────────────────────────────
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+var hasMic = !!SR;
+var MIC_KEY = 'ruApp_mic_v1';
+var isFileUrl = (window.location.protocol === 'file:');
+
+// ── Simple permission helpers (used by perm banners only) ─────────────────────
+var micPermState = !hasMic ? 'unavailable' : isFileUrl ? 'fileblock' : 'unknown';
+var micPermCallbacks = [];
+
+function updatePermUI(){
+  document.querySelectorAll('.perm-status').forEach(function(el){
+    el.className='perm-status '+micPermState;
+    el.textContent=micPermState==='granted'?'✓ Microphone ready':
+      micPermState==='denied'?'✗ Permission denied — enable mic in browser settings':
+      micPermState==='requesting'?'⏳ Requesting permission…':
+      micPermState==='unavailable'?'✗ Speech API not available':
+      '⚪ Tap "Enable Microphone" to allow access';
+  });
+  document.querySelectorAll('.perm-btn').forEach(function(el){
+    if(micPermState==='granted'){el.textContent='✓ Microphone enabled';el.className='perm-btn granted';}
+    else if(micPermState==='requesting'){el.textContent='⏳ Requesting…';el.disabled=true;}
+    else if(micPermState==='denied'){el.textContent='🔒 Denied — check settings';el.disabled=true;}
+    else{el.textContent='🎤 Enable Microphone';el.disabled=false;el.className='perm-btn';}
+  });
+}
+
+function requestMicPermission(cb){
+  if(micPermState==='granted'){if(cb)cb(true);return;}
+  if(!hasMic){if(cb)cb(false);return;}
+  if(cb)micPermCallbacks.push(cb);
+  if(micPermState==='requesting')return;
+  micPermState='requesting';updatePermUI();
+  navigator.mediaDevices.getUserMedia({audio:true})
+    .then(function(stream){
+      stream.getTracks().forEach(function(t){t.stop();});
+      micPermState='granted';updatePermUI();
+      var cbs=micPermCallbacks.slice();micPermCallbacks=[];
+      cbs.forEach(function(fn){fn(true);});
+    })
+    .catch(function(err){
+      micPermState=(err.name==='NotAllowedError'||err.name==='PermissionDeniedError')?'denied':'unknown';
+      updatePermUI();
+      var cbs=micPermCallbacks.slice();micPermCallbacks=[];
+      cbs.forEach(function(fn){fn(false);});
+    });
+}
+
+if(hasMic && navigator.permissions){
+  navigator.permissions.query({name:'microphone'}).then(function(result){
+    if(result.state==='granted')micPermState='granted';
+    else if(result.state==='denied')micPermState='denied';
+    updatePermUI();
+    result.onchange=function(){
+      micPermState=this.state==='granted'?'granted':this.state==='denied'?'denied':'unknown';
+      updatePermUI();
+    };
+  }).catch(function(){});
+}
+
+// Build the permission banner (inserted at top of each module)
+function permBannerHTML(){
+  if(!hasMic) return '<div class="a-banner a-err">🎤 Speech input not available — try Chrome or Edge on Android.<\/div>';
+  if(isFileUrl){
+    return '<div class="perm-banner" style="border-color:#e87030">'+
+      '<div class="perm-banner-title" style="font-size:17px">⚠️ Microphone blocked — file opened locally<\/div>'+
+      '<div class="perm-banner-desc" style="color:rgba(255,200,150,.85);margin-bottom:14px">'+
+        'Chrome blocks microphone for local files. The fix is a <strong style="color:#fff">lightweight server app<\/strong> '+
+        '— it starts in one tap, uses almost no battery, and keeps everything on your phone.'+
+      '<\/div>'+
+
+      '<div style="background:rgba(255,255,255,.07);border-radius:4px;padding:14px;margin-bottom:8px">'+
+        '<div style="color:var(--gl);font-size:13px;font-weight:600;margin-bottom:2px">📲 Recommended app: Simple HTTP Server<\/div>'+
+        '<div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:10px">by Phlox-Apps · free · 3 MB · no ads<\/div>'+
+        '<div class="step"><span class="step-num">1<\/span><span class="step-txt">Install <strong>Simple HTTP Server<\/strong> from the Play Store<\/span><\/div>'+
+        '<div class="step"><span class="step-num">2<\/span><span class="step-txt">Open the app — tap the <strong>folder icon<\/strong> and select your <strong>Downloads<\/strong> folder<\/span><\/div>'+
+        '<div class="step"><span class="step-num">3<\/span><span class="step-txt">Tap <strong>Start<\/strong> — the app shows a URL like <code style="background:rgba(0,0,0,.4);padding:1px 6px;border-radius:3px;color:#ffc060">http:\/\/localhost:8080<\/code><\/span><\/div>'+
+        '<div class="step"><span class="step-num">4<\/span><span class="step-txt">Open Chrome and go to: <code style="background:rgba(0,0,0,.4);padding:1px 6px;border-radius:3px;color:#ffc060">localhost:8080\/russian-reading-lesson.html<\/code><\/span><\/div>'+
+        '<div class="step"><span class="step-num">5<\/span><span class="step-txt">Tap <strong>🎤 Enable Microphone<\/strong> — Chrome asks for permission → tap Allow ✓<\/span><\/div>'+
+      '<\/div>'+
+
+      '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:12px;margin-bottom:8px">'+
+        '<div style="color:rgba(255,255,255,.6);font-size:12px;font-weight:600;margin-bottom:6px">💡 Why this uses almost no battery:<\/div>'+
+        '<div style="font-size:11px;color:rgba(255,255,255,.35);line-height:1.6">'+
+          'The app simply waits for your browser to ask for the file — it does nothing in between. '+
+          'CPU usage is 0% when idle. It is a native Android app, not an interpreter like Python. '+
+          'You can stop it the moment you close the lesson.'+
+        '<\/div>'+
+      '<\/div>'+
+
+      '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:12px">'+
+        '<div style="color:rgba(255,255,255,.6);font-size:12px;font-weight:600;margin-bottom:6px">🔒 Privacy:<\/div>'+
+        '<div style="font-size:11px;color:rgba(255,255,255,.35);line-height:1.6">'+
+          'The server only listens on <code style="background:rgba(0,0,0,.3);padding:1px 4px;border-radius:2px">localhost<\/code> — it is not reachable from the internet or from other devices on your WiFi. '+
+          'Your file never leaves your phone. Note: pronunciation scoring uses Chrome\'s built-in speech recognition, which sends audio to Google servers — the same as any website using the SpeechRecognition API.'+
+        '<\/div>'+
+      '<\/div>'+
+    '<\/div>';
+  }
+  var denied = micPermState==='denied';
+  return '<div class="perm-banner" id="pb-'+Math.random().toString(36).slice(2)+'" data-perm>'+
+    '<div class="perm-banner-title">🎤 Microphone Access<\/div>'+
+    (denied
+      ? '<div class="perm-banner-desc" style="color:#ff9070">Microphone access was blocked. Follow the steps below, then tap Enable Microphone again.<\/div>'
+      : '<div class="perm-banner-desc">This app needs your microphone to score your Russian pronunciation. Tap <strong style="color:#fff">Enable Microphone<\/strong> — Chrome will ask for permission.<\/div>')+
+    '<div class="perm-banner-row">'+
+      '<button class="perm-btn" onclick="requestMicPermission(null)">🎤 Enable Microphone<\/button>'+
+      '<span class="perm-status"><\/span>'+
+    '<\/div>'+
+    (denied ?
+      '<div class="steps-card">'+
+        '<div class="step"><span class="step-num">1<\/span><span class="step-txt">Tap Chrome <strong>⋮ menu<\/strong> → <strong>Settings<\/strong><\/span><\/div>'+
+        '<div class="step"><span class="step-num">2<\/span><span class="step-txt">Tap <strong>Site settings<\/strong> → <strong>Microphone<\/strong><\/span><\/div>'+
+        '<div class="step"><span class="step-num">3<\/span><span class="step-txt">Find this site in the list → tap <strong>Allow<\/strong><\/span><\/div>'+
+        '<div class="step"><span class="step-num">4<\/span><span class="step-txt">Return here and tap <strong>🎤 Enable Microphone<\/strong><\/span><\/div>'+
+      '<\/div>'
+    : '')+
+  '<\/div>';
+}
+
+// ── SCORING ───────────────────────────────────────────────────────────────────
+// Normalise: lowercase, strip punctuation, collapse ё→е (same sound unstressed), trim.
+function normRu(s) {
+  return s.toLowerCase()
+    .replace(/[«»—–.,!?;:\-()]/g, '')
+    .replace(/ё/g, 'е')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Levenshtein distance.
+function lev(a, b) {
+  if (a === b) return 0;
+  var m = a.length, n = b.length;
+  if (!m) return n; if (!n) return m;
+  var p = [], c = [];
+  for (var j = 0; j <= n; j++) p[j] = j;
+  for (var i = 1; i <= m; i++) {
+    c[0] = i;
+    for (var jj = 1; jj <= n; jj++)
+      c[jj] = a[i-1] === b[jj-1] ? p[jj-1] : 1 + Math.min(p[jj-1], p[jj], c[jj-1]);
+    p = c.slice();
+  }
+  return p[n];
+}
+
+// Score 0–100: text similarity × confidence multiplier.
+//
+// Chrome's confidence is unreliable — it varies widely (0.3–0.9) even for correct
+// speech depending on mic quality, accent, and background noise. It should act only
+// as a LIGHT penalty for genuinely unclear input, not a steep linear cut.
+//
+// Formula: textSim × (0.88 + 0.12 × conf)
+//   conf 1.0 → ×1.00  — perfect signal
+//   conf 0.6 → ×0.95  — slight accent/noise, barely penalised
+//   conf 0.4 → ×0.93  — Chrome guessing, small penalty only
+//   conf 0.2 → ×0.90  — very unclear, ~10% off max
+//
+// For syllables the formula is identical — the syllable leniency (textSim boost for
+// 1-char phoneme swap) already does the right job there without needing a different
+// multiplier curve.
+function scoreTranscript(heard, confidence, target, opts) {
+  var h = normRu(heard), t = normRu(target);
+  if (!h) return 0;
+
+  // ── Text similarity ────────────────────────────────────────────────────────
+  var textSim;
+  if (h === t) {
+    textSim = 1;
+  } else {
+    var tW = t.split(' '), hW = h.split(' ');
+    var total = 0;
+    for (var i = 0; i < tW.length; i++) {
+      var tw = tW[i], best = 0;
+      for (var j = 0; j < hW.length; j++) {
+        var hw = hW[j];
+        var dist = lev(hw, tw);
+        var maxLen = Math.max(hw.length, tw.length, 1);
+        var sim = 1 - dist / maxLen;
+        // Syllable leniency: a single-phoneme STT error on a ≤3-char syllable
+        // (Chrome maps "ОМ" → "он", "МА" → "мне", etc.) still earns 0.88 textSim.
+        if (opts && opts.syllable && tw.length <= 3 && dist === 1) sim = 0.88;
+        if (sim > best) best = sim;
+      }
+      total += best;
+    }
+    textSim = total / tW.length;
+  }
+
+  // ── Confidence multiplier (shallow — only penalises genuinely unclear input) ─
+  var conf = (typeof confidence === 'number') ? Math.min(1, Math.max(0, confidence)) : 0.75;
+  var confMult = 0.88 + 0.12 * conf;
+
+  return Math.round(textSim * confMult * 100);
+}
+
+// ── MIC WIDGET ────────────────────────────────────────────────────────────────
+function micWidget(target, cb, opts) {
+  opts = opts || {};
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;width:100%';
+
+  if (!hasMic) {
+    wrap.innerHTML = '<div class="mic-result miss">🎤 Speech recognition unavailable — use Chrome on Android.</div>';
+    return wrap;
+  }
+
+  var btn = document.createElement('button');
+  btn.className = 'mic-btn';
+  btn.style.cssText = 'width:100%;font-size:15px;padding:12px';
+  btn.textContent = '🎤 Speak';
+
+  var info = document.createElement('div');
+
+  function resetBtn() {
+    btn.disabled = false;
+    btn.style.cssText = 'width:100%;font-size:15px;padding:12px';
+    btn.textContent = '🎤 Speak again';
+  }
+
+  function renderScore(transcript, confidence, isInterim) {
+    var pct  = scoreTranscript(transcript, confidence, target, opts);
+    var cls  = pct >= 80 ? 'great' : pct >= 50 ? 'close' : 'miss';
+    var icon = pct >= 80 ? '✓'    : pct >= 50 ? '≈'     : '✗';
+    var msg  = pct >= 80 ? 'Great pronunciation!' : pct >= 50 ? 'Getting there!' : 'Try again — listen first.';
+    var note = isInterim ? '<div style="font-size:10px;opacity:.6;margin-top:2px">⚠ Partial — speak a little longer next time</div>' : '';
+    // Display the normalised transcript — same text the score was computed on,
+    // so the "Heard" line always matches what was evaluated (no stray punctuation
+    // or capitalisation artefacts from Chrome's raw output).
+    var display = normRu(transcript);
+    btn.disabled = false;
+    btn.style.cssText = 'width:100%;font-size:15px;padding:12px';
+    btn.textContent = '🎤 Speak again';
+    info.innerHTML = '<div class="mic-result ' + cls + '"><span class="mic-score">' + icon + ' ' + pct + '%</span>' + msg +
+      '<div class="mic-heard">Heard: "' + display + '"</div>' + note + '</div>';
+    try { localStorage.setItem(MIC_KEY, '1'); } catch(e) {}
+    if (cb) cb(pct, transcript);
+  }
+
+  // ── Recording state ────────────────────────────────────────────────────────
+  var _rec = null;          // current SR instance
+  var _manuallyStopped = false;
+  var _silenceTimer = null;
+
+  // Multi-word targets need continuous=true so Chrome doesn't stop after the first word.
+  var _isMultiWord = target.trim().indexOf(' ') !== -1;
+  // Short single syllables/letters benefit from one auto-retry if Chrome misses them.
+  var _isShort = !_isMultiWord && normRu(target).replace(/\s/g,'').length <= 4;
+
+  function clearSilenceTimer() {
+    if (_silenceTimer) { clearTimeout(_silenceTimer); _silenceTimer = null; }
+  }
+  function armSilenceTimer() {
+    clearSilenceTimer();
+    _silenceTimer = setTimeout(function() {
+      _silenceTimer = null;
+      var r = _rec; if (!r) return;
+      _rec = null; _manuallyStopped = true;
+      btn.disabled = true;
+      try { r.stop(); } catch(e) {}
+    }, 4000);
+  }
+
+  function startSession(retryCount) {
+    var r = new SR();
+    _rec = r;
+    r.lang = 'ru-RU';
+    r.continuous    = _isMultiWord;
+    r.interimResults = true;
+    r.maxAlternatives = 5;
+
+    var _finalScored = false, _lastInterim = '', _lastInterimConf = 0.5;
+    // Accumulator for continuous (multi-word) mode: store {t, c} per chunk
+    var _contParts = [];
+    // Retry counter — short/syllable targets get up to 3 attempts before giving up
+    var _retryCount = retryCount || 0;
+    var _maxRetries = (_isShort || (opts && opts.syllable)) ? 3 : 1;
+
+    r.onstart = function() {
+      armSilenceTimer();
+      btn.disabled = false;
+      btn.style.cssText = 'width:100%;font-size:15px;padding:12px;background:#cc1100;border-color:#cc1100;color:#fff';
+      btn.textContent = '■ Stop';
+      info.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:4px 2px">Speak now — tap ■ Stop or wait for auto-score.</div>';
+    };
+
+    r.onresult = function(ev) {
+      armSilenceTimer();
+      var finalT = '', finalC = 0, finalN = 0, interim = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        if (ev.results[i].isFinal) {
+          // Pick the alternative whose combined score (text × confidence) is highest.
+          // This prevents gaming: an alternative that text-matches perfectly but with
+          // low confidence (Chrome was guessing) won't outscore a confident near-match.
+          var bestT = ev.results[i][0].transcript;
+          var bestC = ev.results[i][0].confidence || 0.5;
+          var bestScore = scoreTranscript(bestT, bestC, target, opts);
+          for (var j = 1; j < ev.results[i].length; j++) {
+            var altT = ev.results[i][j].transcript;
+            var altC = ev.results[i][j].confidence || 0.5;
+            var altScore = scoreTranscript(altT, altC, target, opts);
+            if (altScore > bestScore) { bestScore = altScore; bestT = altT; bestC = altC; }
+          }
+          finalT += (finalT ? ' ' : '') + bestT;
+          finalC += bestC; finalN++;
+        } else {
+          interim += ev.results[i][0].transcript;
+          // Chrome doesn't give confidence for interim results; use a conservative default
+          _lastInterimConf = 0.55;
+        }
+      }
+      if (interim) _lastInterim = interim;
+      if (finalT) {
+        var avgC = finalN ? finalC / finalN : 0.5;
+        if (_isMultiWord) {
+          _contParts.push({ t: finalT, c: avgC });
+          info.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:4px 2px;font-style:italic">🎙 "' + _contParts.map(function(x){return x.t;}).join(' ') + '"</div>';
+        } else {
+          clearSilenceTimer();
+          if (_rec === r) _rec = null;
+          _finalScored = true;
+          renderScore(finalT, avgC, false);
+        }
+      }
+    };
+
+    r.onerror = function(ev) {
+      if (ev.error === 'aborted' || ev.error === 'no-speech') return;
+      clearSilenceTimer();
+      if (_rec === r) _rec = null;
+      _finalScored = true;
+      if (ev.error === 'not-allowed' || ev.error === 'permission-denied') {
+        micPermState = 'denied'; updatePermUI();
+        resetBtn(); info.innerHTML = '<div class="mic-result miss">🔒 Mic blocked — enable in Chrome site settings.</div>';
+      } else {
+        resetBtn(); info.innerHTML = '<div class="mic-result miss">⚠ Error: ' + ev.error + '</div>';
+      }
+    };
+
+    r.onend = function() {
+      clearSilenceTimer();
+      if (_rec === r) _rec = null;
+      if (_finalScored) return;
+
+      if (_isMultiWord) {
+        if (_contParts.length) {
+          var joinedT = _contParts.map(function(x){return x.t;}).join(' ');
+          var avgConf = _contParts.reduce(function(s,x){return s+x.c;},0) / _contParts.length;
+          renderScore(joinedT, avgConf, false);
+        } else if (_lastInterim) {
+          renderScore(_lastInterim, _lastInterimConf, true);
+        } else {
+          resetBtn(); info.innerHTML = '<div class="mic-result miss">⚠ Nothing heard — speak clearly and wait.</div>';
+        }
+        return;
+      }
+
+      // Short/syllable target: retry up to _maxRetries times (suppressed on manual stop)
+      if (_isShort && _retryCount < _maxRetries && !_manuallyStopped) {
+        startSession(_retryCount + 1);
+        return;
+      }
+
+      if (_lastInterim) renderScore(_lastInterim, _lastInterimConf, true);
+      else { resetBtn(); info.innerHTML = '<div class="mic-result miss">⚠ Nothing heard — speak a little louder.</div>'; }
+    };
+
+    try { r.start(); }
+    catch(ex) {
+      if (_rec === r) _rec = null;
+      resetBtn(); info.innerHTML = '<div class="mic-result miss">⚠ Could not start: ' + ex.message + '</div>';
+    }
+  }
+
+  // ── Button click ──────────────────────────────────────────────────────────
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (btn.disabled) return;
+    if (isFileUrl) { info.innerHTML = '<div class="mic-result miss">⚠️ Open via localhost, not file://.</div>'; return; }
+    if (micPermState === 'denied') { info.innerHTML = '<div class="mic-result miss">🔒 Mic blocked — enable in Chrome site settings.</div>'; return; }
+
+    btn.disabled = true;
+
+    // If recording is active — stop it
+    if (_rec) {
+      var r = _rec; _rec = null;
+      _manuallyStopped = true;
+      clearSilenceTimer();
+      try { r.stop(); } catch(e) {}
+      return;
+    }
+
+    _manuallyStopped = false;
+    info.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:4px 2px">🎙 Starting mic…</div>';
+
+    function go() { startSession(0); }
+
+    if (micPermState === 'granted') {
+      go();
+    } else {
+      btn.textContent = '⏳ Getting permission…';
+      requestMicPermission(function(ok) {
+        if (ok) { go(); }
+        else { resetBtn(); btn.textContent = '🎤 Speak'; info.innerHTML = '<div class="mic-result miss">🔒 Permission denied.</div>'; }
+      });
+    }
+  });
+
+  wrap.appendChild(btn);
+  wrap.appendChild(info);
+  return wrap;
+}
+
+// ── MIC SETUP ────────────────────────────────────────────────────────────────
+var isBlocked = ['file:','content:','blob:'].indexOf(window.location.protocol) !== -1;
+
+function localBannerHTML(){
+  return '<div class="local-banner">'+
+    '<div class="local-banner-title">🎤 Microphone requires a local server<\/div>'+
+    '<div class="local-banner-body">'+
+      'Chrome blocks microphone access on files opened from storage. '+
+      'Serve the file over <strong style="color:#fff">localhost<\/strong> using the free app '+
+      '<strong style="color:#fff">Simple HTTP Server<\/strong> (by Phlox-Apps, Play Store):'+
+    '<\/div>'+
+    '<ol class="local-steps">'+
+      '<li><span class="ls-num">1<\/span><span>Install <strong>Simple HTTP Server<\/strong> from the Play Store<\/span><\/li>'+
+      '<li><span class="ls-num">2<\/span><span>Open it → tap the folder icon → select <strong>Downloads<\/strong><\/span><\/li>'+
+      '<li><span class="ls-num">3<\/span><span>Tap <strong>Start<\/strong><\/span><\/li>'+
+      '<li><span class="ls-num">4<\/span><span>In Chrome, open: <span class="ls-code">localhost:8080\/russian-reading-lesson.html<\/span><\/span><\/li>'+
+      '<li><span class="ls-num">5<\/span><span>Tap <strong>🎤 Speak<\/strong> on any exercise — Chrome will ask for mic permission<\/span><\/li>'+
+    '<\/ol>'+
+    '<div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:10px">'+
+      '💡 The server uses almost no battery — it is a native app that only wakes when Chrome requests a file.'+
+    '<\/div>'+
+  '<\/div>';
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function insertBanner(mod){
+  if(!isBlocked)return;
+  var b=document.createElement('div');
+  b.innerHTML=localBannerHTML();
+  mod.insertBefore(b.firstChild,mod.firstChild);
+}
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+
+// Shuffle pool[fromIdx..end] in place — randomises remaining exercises after each step
+function shuffleRemaining(pool,fromIdx){
+  for(var i=pool.length-1;i>fromIdx;i--){
+    var j=fromIdx+Math.floor(Math.random()*(i-fromIdx+1));
+    var t=pool[i];pool[i]=pool[j];pool[j]=t;
+  }
+}
+
+function levelBar(cur,fn){
+  var d=document.createElement('div');d.className='level-bar';
+  d.innerHTML='<label>Level:<\/label>';
+  [[1,'🟢 Beginner'],[2,'🟡 Intermediate'],[3,'🔴 Advanced']].forEach(function(lv){
+    var b=document.createElement('button');
+    b.className='lbtn l'+lv[0]+(cur===lv[0]?' on':'');
+    b.textContent=lv[1];
+    b.onclick=function(){fn(lv[0]);};
+    d.appendChild(b);
+  });
+  return d;
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var LETTERS=[
+  {cyr:'А',roman:'A',   sound:'open "ah" — father',             lv:1},
+  {cyr:'О',roman:'O',   sound:'"oh" when stressed — more',      lv:1},
+  {cyr:'М',roman:'M',   sound:'"m" — same as English',          lv:1},
+  {cyr:'К',roman:'K',   sound:'"k" — same as English',          lv:1},
+  {cyr:'Т',roman:'T',   sound:'"t" — same as English',          lv:1},
+  {cyr:'В',roman:'V',   sound:'"v" as in voice — NOT "B"!',     lv:2},
+  {cyr:'Н',roman:'N',   sound:'"n" as in not — NOT "H"!',       lv:2},
+  {cyr:'Р',roman:'R',   sound:'rolled "r" — NOT "P"!',          lv:2},
+  {cyr:'С',roman:'S',   sound:'"s" as in sun — NOT "C"!',       lv:2},
+  {cyr:'П',roman:'P',   sound:'"p" as in pet — NOT "N"!',       lv:2},
+  {cyr:'У',roman:'OO',  sound:'"oo" as in moon — NOT "Y"!',     lv:2},
+  {cyr:'Е',roman:'YE',  sound:'"ye" as in yes — NOT plain E!',  lv:2},
+  {cyr:'З',roman:'Z',   sound:'"z" as in zoo — NOT "3"!',       lv:2},
+  {cyr:'Х',roman:'KH',  sound:'"kh" — like ch in Bach',         lv:2},
+  {cyr:'Й',roman:'Y',   sound:'short y — like y in boy',        lv:2},
+  {cyr:'Б',roman:'B',   sound:'"b" — like English b',           lv:3},
+  {cyr:'Г',roman:'G',   sound:'"g" — like go',                  lv:3},
+  {cyr:'Д',roman:'D',   sound:'"d" — like door',                lv:3},
+  {cyr:'Ё',roman:'YO',  sound:'"yo" — like yogurt',             lv:3},
+  {cyr:'Ж',roman:'ZH',  sound:'"zh" — s in measure',            lv:3},
+  {cyr:'И',roman:'EE',  sound:'"ee" — like see',                lv:3},
+  {cyr:'Л',roman:'L',   sound:'"l" — slightly dark l',          lv:3},
+  {cyr:'Ф',roman:'F',   sound:'"f" — like fish',                lv:3},
+  {cyr:'Ц',roman:'TS',  sound:'"ts" — like its',                lv:3},
+  {cyr:'Ч',roman:'CH',  sound:'"ch" — like chair',              lv:3},
+  {cyr:'Ш',roman:'SH',  sound:'"sh" — like shoe',               lv:3},
+  {cyr:'Щ',roman:'SHCH',sound:'"shch" — softer longer Ш',       lv:3},
+  {cyr:'Ы',roman:'Y',   sound:'no English equiv — tongue back', lv:3},
+  {cyr:'Э',roman:'E',   sound:'"e" — like end',                 lv:3},
+  {cyr:'Ю',roman:'YU',  sound:'"yu" — like you',                lv:3},
+  {cyr:'Я',roman:'YA',  sound:'"ya" — like yard',               lv:3},
+];
+
+var SYL1=[
+  {s:'МА',r:'MÁ'},{s:'МО',r:'MÓ'},{s:'МУ',r:'MÚ'},{s:'МИ',r:'MÍ'},{s:'МЕ',r:'MYÉ'},
+  {s:'НА',r:'NÁ'},{s:'НО',r:'NÓ'},{s:'НУ',r:'NÚ'},{s:'НИ',r:'NÍ'},
+  {s:'ПА',r:'PÁ'},{s:'ПО',r:'PÓ'},{s:'ПУ',r:'PÚ'},
+  {s:'РА',r:'RÁ'},{s:'РО',r:'RÓ'},{s:'РУ',r:'RÚ'},
+  {s:'СА',r:'SÁ'},{s:'СО',r:'SÓ'},{s:'СУ',r:'SÚ'},
+  {s:'КА',r:'KÁ'},{s:'КО',r:'KÓ'},{s:'КУ',r:'KÚ'},
+  {s:'ТА',r:'TÁ'},{s:'ТО',r:'TÓ'},{s:'ТУ',r:'TÚ'},
+  {s:'АМ',r:'ÁM'},{s:'ОМ',r:'ÓM'},{s:'УМ',r:'ÚM'},
+  {s:'АН',r:'ÁN'},{s:'ОН',r:'ÓN'},{s:'УН',r:'ÚN'},
+  {s:'АК',r:'ÁK'},{s:'ОК',r:'ÓK'},{s:'УК',r:'ÚK'},
+  {s:'АТ',r:'ÁT'},{s:'ОТ',r:'ÓT'},{s:'УТ',r:'ÚT'},
+  {s:'АС',r:'ÁS'},{s:'ОС',r:'ÓS'},{s:'УС',r:'ÚS'},
+  {s:'АЛ',r:'ÁL'},{s:'ОЛ',r:'ÓL'},{s:'УЛ',r:'ÚL'},
+];
+var SYL2=[
+  {s:'ВА',r:'VÁ'},{s:'ВО',r:'VÓ'},{s:'ВИ',r:'VÍ'},{s:'ВЕ',r:'VYÉ'},
+  {s:'ДА',r:'DÁ'},{s:'ДО',r:'DÓ'},{s:'ДУ',r:'DÚ'},
+  {s:'БА',r:'BÁ'},{s:'БО',r:'BÓ'},{s:'БУ',r:'BÚ'},
+  {s:'ЖА',r:'ZHÁ'},{s:'ЧА',r:'CHÁ'},{s:'ША',r:'SHÁ'},
+  {s:'ЦА',r:'TSÁ'},{s:'ЛА',r:'LÁ'},{s:'ЛО',r:'LÓ'},{s:'ЛУ',r:'LÚ'},
+  {s:'ВУ',r:'VÚ'},{s:'ВА',r:'VÁ'},
+  {s:'НА',r:'NÁ'},{s:'НЕ',r:'NYÉH'},{s:'НИ',r:'NÍ'},
+  {s:'ЖЕ',r:'ZHYÉ'},{s:'ЖИ',r:'ZHÍ'},
+  {s:'ЧЕ',r:'CHYÉ'},{s:'ЧИ',r:'CHÍ'},
+  {s:'ШЕ',r:'SHYÉ'},{s:'ШИ',r:'SHÍ'},
+  {s:'ЦЕ',r:'TSYÉ'},{s:'ЛЕ',r:'LYÉ'},{s:'ЛИ',r:'LÍ'},
+  {s:'ФА',r:'FÁ'},{s:'ФО',r:'FÓ'},{s:'ФУ',r:'FÚ'},{s:'ФИ',r:'FÍ'},
+  {s:'ХА',r:'KHÁ'},{s:'ХО',r:'KHÓ'},{s:'ХУ',r:'KHÚ'},
+  {s:'ГА',r:'GÁ'},{s:'ГО',r:'GÓ'},{s:'ГУ',r:'GÚ'},
+];
+var SYL3=[
+  {s:'СТА',r:'STÁ'},{s:'СТО',r:'STÓ'},{s:'СТУ',r:'STÚ'},
+  {s:'ПРА',r:'PRÁ'},{s:'ПРО',r:'PRÓ'},{s:'ПРИ',r:'PRÍ'},
+  {s:'КРА',r:'KRÁ'},{s:'КРО',r:'KRÓ'},{s:'ТРА',r:'TRÁ'},
+  {s:'ДВА',r:'DVÁ'},{s:'СКА',r:'SKÁ'},{s:'ВРА',r:'VRÁ'},
+  {s:'ЗВА',r:'ZVÁ'},{s:'ЗНА',r:'ZNÁ'},{s:'СПА',r:'SPÁ'},
+  {s:'БРА',r:'BRÁ'},{s:'БРО',r:'BRÓ'},{s:'БРИ',r:'BRÍ'},
+  {s:'ФРА',r:'FRÁ'},{s:'ФРО',r:'FRÓ'},
+  {s:'ГРА',r:'GRÁ'},{s:'ГРО',r:'GRÓ'},{s:'ГРИ',r:'GRÍ'},
+  {s:'ЧТА',r:'CHTÁ'},{s:'ЧТО',r:'CHTÓ'},
+  {s:'ЗДА',r:'ZDÁ'},{s:'ЗДО',r:'ZDÓ'},
+  {s:'СТИ',r:'STÍ'},{s:'СТЕ',r:'STYÉ'},
+  {s:'ПЛА',r:'PLÁ'},{s:'ПЛО',r:'PLÓ'},{s:'ПЛИ',r:'PLÍ'},
+  {s:'КЛА',r:'KLÁ'},{s:'КЛО',r:'KLÓ'},
+  {s:'СНА',r:'SNÁ'},{s:'СНО',r:'SNÓ'},
+  {s:'СМА',r:'SMÁ'},{s:'СМО',r:'SMÓ'},
+];
+
+var WL1=[
+  // Family basics
+  {w:'МАМА',r:'MÁ-MA',h:'М=M, А=A repeated',e:'mom'},
+  {w:'ПАПА',r:'PÁ-PA',h:'П=P, А=A repeated',e:'dad'},
+  {w:'БРАТ',r:'BRÁT',h:'Б=B, Р=R, А=A, Т=T',e:'brother'},
+  {w:'СЫН',r:'SÝN',h:'С=S, Ы=Y, Н=N',e:'son'},
+  {w:'ДОЧЬ',r:'DÓCH',h:'Д=D, О=O, Ч=CH — soft sign',e:'daughter'},
+  {w:'ДЕД',r:'DYÉD',h:'Д=D, Е=YE, Д=D',e:'grandpa'},
+  {w:'МУЖ',r:'MÚZH',h:'М=M, У=OO, Ж=ZH',e:'husband'},
+  {w:'ЖЕНА',r:'ZHI-NÁ',h:'Ж=ZH, Е=YE, Н=N, А=A',e:'wife'},
+  // Weather basics
+  {w:'СНЕГ',r:'SNÝEK',h:'С=S, Н=N, Е=YE, Г=G',e:'snow'},
+  {w:'ДОЖДЬ',r:'DÓZHD',h:'Д=D, О=O, Ж=ZH, Д=D — soft sign',e:'rain'},
+  {w:'ЛЁД',r:'LYÓD',h:'Л=L, Ё=YO, Д=D',e:'ice'},
+  {w:'ВЕТЕР',r:'VÝE-TIR',h:'В=V, Е=YE, Т=T, Р=R',e:'wind'},
+  {w:'НЕБО',r:'NÝE-BA',h:'Н=N, Е=YE, Б=B, О=O',e:'sky'},
+  {w:'ГРАД',r:'GRÁD',h:'Г=G, Р=R, А=A, Д=D',e:'hail'},
+  // Food & drink
+  {w:'ЧАЙ',r:'CHÁY',h:'Ч=CH, А=A, Й=Y',e:'tea'},
+  {w:'СУП',r:'SÚP',h:'С=S, У=OO, П=P',e:'soup'},
+  {w:'СОК',r:'SÓK',h:'С=S, О=O, К=K',e:'juice'},
+  {w:'ХЛЕБ',r:'KHLÉP',h:'Х=KH, Л=L, Е=YE, Б=B',e:'bread'},
+  {w:'ВОДА',r:'VA-DÁ',h:'В=V, О=O, Д=D, А=A',e:'water'},
+  {w:'ЕДА',r:'YE-DÁ',h:'Е=YE, Д=D, А=A',e:'food'},
+  // Time & place
+  {w:'ДОМ',r:'DÓM',h:'Д=D, О=O, М=M',e:'house'},
+  {w:'ДЕНЬ',r:'DYÉN',h:'Д=D, Е=YE, Н=N — soft sign',e:'day'},
+  {w:'НОЧЬ',r:'NÓCH',h:'Н=N, О=O, Ч=CH — soft sign',e:'night'},
+  {w:'ЧАС',r:'CHÁS',h:'Ч=CH, А=A, С=S',e:'hour'},
+  {w:'ГОД',r:'GÓD',h:'Г=G, О=O, Д=D',e:'year'},
+  // People & nature
+  {w:'ВРАЧ',r:'VRÁCH',h:'В=V, Р=R, А=A, Ч=CH',e:'doctor'},
+  {w:'КОТ',r:'KÓT',h:'К=K, О=O, Т=T',e:'cat'},
+  {w:'ПЁС',r:'PYÓS',h:'П=P, Ё=YO, С=S',e:'dog'},
+  {w:'МИР',r:'MÍR',h:'М=M, И=EE, Р=R',e:'world / peace'},
+  {w:'РУКА',r:'RU-KÁ',h:'Р=R, У=OO, К=K, А=A',e:'hand / arm'},
+  {w:'НОГА',r:'NA-GÁ',h:'Н=N, О=O, Г=G, А=A',e:'leg / foot'},
+  {w:'МОРЕ',r:'MÓ-RYE',h:'М=M, О=O, Р=R, Е=YE',e:'sea'},
+  {w:'ЛЕС',r:'LYÉS',h:'Л=L, Е=YE, С=S',e:'forest'},
+  {w:'ДА',r:'DÁ',h:'simple 2 letters',e:'yes'},
+  {w:'НЕТ',r:'NYÉT',h:'Н=N, Е=YE, Т=T',e:'no'},
+];
+var WL2=[
+  // Extended family
+  {w:'СЕСТРА',r:'SIS-TRÁ',h:'С=S, Е=YE, С=S, Т=T, Р=R',e:'sister'},
+  {w:'СЕМЬЯ',r:'SIM-YÁ',h:'С=S, Е=YE, М=M, Я=YA',e:'family'},
+  {w:'БАБУШКА',r:'BÁ-BUSH-KA',h:'Б=B, А=A, Б=B, Ш=SH, К=K',e:'grandmother'},
+  {w:'ДЕДУШКА',r:'DYÉ-DUSH-KA',h:'Д=D, Е=YE, Д=D, Ш=SH, К=K',e:'grandfather'},
+  {w:'ТЁТЯ',r:'TYÓT-YA',h:'Т=T, Ё=YO, Т=T, Я=YA',e:'aunt'},
+  {w:'ДЯДЯ',r:'DYÁ-DYA',h:'Д=D, Я=YA repeated',e:'uncle'},
+  {w:'РЕБЁНОК',r:'RYE-BYÓN-OK',h:'Р=R, Е=YE, Б=B, Ё=YO, Н=N',e:'child'},
+  // Weather extended
+  {w:'ПОГОДА',r:'PA-GÓ-DA',h:'П=P, Г=G, Д=D, А=A',e:'weather'},
+  {w:'СОЛНЦЕ',r:'SÓN-TSE',h:'Л is silent! С=S, О=O, Н=N, Ц=TS',e:'sun'},
+  {w:'ОБЛАКО',r:'ÓB-LA-KO',h:'О=O, Б=B, Л=L, А=A, К=K',e:'cloud'},
+  {w:'МОРОЗ',r:'MA-RÓS',h:'М=M, Р=R — З sounds like S at end',e:'frost'},
+  {w:'ЖАРА',r:'ZHA-RÁ',h:'Ж=ZH, А=A, Р=R, А=A',e:'heat'},
+  {w:'ГРОЗА',r:'GRA-ZÁ',h:'Г=G, Р=R, З=Z, А=A',e:'thunderstorm'},
+  {w:'ТУМАН',r:'TU-MÁN',h:'Т=T, У=OO, М=M, А=A, Н=N',e:'fog'},
+  {w:'ПРОГНОЗ',r:'PROG-NÓZ',h:'Г=G, Н=N, З=Z',e:'weather forecast'},
+  // Seasons
+  {w:'ВЕСНА',r:'VIS-NÁ',h:'В=V, Е=YE, С=S, Н=N, А=A',e:'spring'},
+  {w:'ЛЕТО',r:'LYÉ-TA',h:'Л=L, Е=YE, Т=T, О=O',e:'summer'},
+  {w:'ОСЕНЬ',r:'Ó-SYEN',h:'О=O, С=S, Е=YE, Н=N — soft sign',e:'autumn'},
+  {w:'ЗИМА',r:'ZI-MÁ',h:'З=Z, И=EE, М=M, А=A',e:'winter'},
+  // Food
+  {w:'МОЛОКО',r:'MA-LA-KÓ',h:'М=M, Л=L, К=K — О×3',e:'milk'},
+  {w:'КОФЕ',r:'KÓ-FYE',h:'К=K, Ф=F, Е=YE',e:'coffee'},
+  {w:'МЯСО',r:'MYÁ-SA',h:'М=M, Я=YA, С=S, О=O',e:'meat'},
+  {w:'РЫБА',r:'RÝ-BA',h:'Р=R, Ы=Y, Б=B, А=A',e:'fish'},
+  // Places & life
+  {w:'ШКОЛА',r:'SHKÓ-LA',h:'Ш=SH, К=K, Л=L, А=A',e:'school'},
+  {w:'МАГАЗИН',r:'MA-GA-ZÍN',h:'Г=G, З=Z, Н=N',e:'store'},
+  {w:'БОЛЬНИЦА',r:'BAL-NÍ-TSA',h:'Б=B, Л=L, Н=N, Ц=TS, А=A',e:'hospital'},
+  {w:'АПТЕКА',r:'AP-TYÉ-KA',h:'А=A, П=P, Т=T, Е=YE, К=K',e:'pharmacy'},
+  {w:'ВОКЗАЛ',r:'VAK-ZÁL',h:'В=V, К=K, З=Z, Л=L',e:'train station'},
+  {w:'РЕСТОРАН',r:'RIS-TA-RÁN',h:'Р=R twice, С=S',e:'restaurant'},
+  {w:'РЫНОК',r:'RÝ-NOK',h:'Р=R, Н=N, К=K',e:'market'},
+  {w:'РАБОТА',r:'RA-BÓ-TA',h:'Р=R, Б=B, Т=T, А=A',e:'work / job'},
+  {w:'УЧИТЕЛЬ',r:'U-CHÍ-TYEL',h:'У=OO, Ч=CH, Т=T, Л=L',e:'teacher'},
+  {w:'СТУДЕНТ',r:'STU-DYÉNT',h:'С=S, Т=T, Д=D, Е=YE, Н=N',e:'student'},
+  {w:'ДЕНЬГИ',r:'DYÉN-GI',h:'Д=D, Е=YE, Н=N, Г=G, И=EE',e:'money'},
+  {w:'МАШИНА',r:'MA-SHÍ-NA',h:'М=M, Ш=SH, Н=N, А=A',e:'car'},
+  {w:'МИРОВОЗЗРЕНИЕ',r:'MI-RA-VAZ-ZRYÉ-NI-YE',h:'МИР + world-view compound',e:'worldview'},
+  {w:'САМОСОЗНАНИЕ',r:'SA-MA-SAZ-NÁ-NI-YE',h:'САМО + self-awareness',e:'self-awareness'},
+  {w:'ЧЕЛОВЕЧЕСТВО',r:'CHE-LA-VYÉCH-ES-TVA',h:'ЧЕЛ=person, -ЕСТВО suffix',e:'humanity'},
+  {w:'СОСТРАДАНИЕ',r:'SAS-TRA-DÁ-NI-YE',h:'СО + страдание',e:'compassion'},
+  {w:'ВДОХНОВЕНИЕ',r:'VDA-KH-NA-VYÉN-I-YE',h:'В+ДОХ+НОВ cluster',e:'inspiration'},
+  {w:'ВООБРАЖЕНИЕ',r:'VA-AB-RA-ZHÉN-I-YE',h:'long О cluster',e:'imagination'},
+  {w:'НЕОПРЕДЕЛЁННОСТЬ',r:'NYE-AP-RYE-DYE-LYÓN-NAST',h:'НЕО prefix cluster',e:'uncertainty'},
+  {w:'ПРОТИВОРЕЧИЕ',r:'PRA-TI-VA-RYÉCH-I-YE',h:'ПРОТИВ + РЕЧ cluster',e:'contradiction'},
+  {w:'ЗАКОНОМЕРНОСТЬ',r:'ZA-KA-NA-MYÉR-NAST',h:'ЗАКОН + МЕРНОСТЬ',e:'pattern / regularity'},
+  {w:'ПОСЛЕДОВАТЕЛЬНОСТЬ',r:'PAS-LYÉD-A-VA-TYIL-NAST',h:'very long -НОСТЬ suffix',e:'consistency'},
+  {w:'САМОДОСТАТОЧНОСТЬ',r:'SA-MA-DAS-TÁ-TACH-NAST',h:'САМО + ДОСТА cluster',e:'self-sufficiency'},
+  {w:'КОНСТИТУЦИЯ',r:'KAN-STI-TÚ-TSI-YA',h:'КОН+СТИ+ТУЦ cluster',e:'constitution'},
+  {w:'НЕЗАВИСИМОСТЬ',r:'NYE-ZA-VÍ-SI-MAST',h:'НЕ+ЗАВИСИ+МОСТЬ',e:'independence'},
+  {w:'ДЕМОКРАТИЯ',r:'DYE-MAK-RÁ-TI-YA',h:'Д=D, М=M, К=K, Р=R',e:'democracy'},
+  {w:'ГРАЖДАНСТВО',r:'GRAZH-DÁN-STVA',h:'ГРАЖ cluster',e:'citizenship'},
+  {w:'ЗАКОНОДАТЕЛЬСТВО',r:'ZA-KA-NA-DÁ-TYIL-STVA',h:'very long ЗАК+НОД compound',e:'legislation'},
+  {w:'МЕЖДУНАРОДНЫЙ',r:'MYEZH-DU-NA-RÓD-NY',h:'МЕЖД cluster',e:'international'},
+  {w:'СПРАВЕДЛИВОСТЬ',r:'SPRA-VYI-DLÍ-VAST',h:'СПРАВ+ДЛИ cluster',e:'justice'},
+  {w:'ОБЩЕСТВЕННОСТЬ',r:'AB-SHCHES-TVYEN-NAST',h:'ОБЩ cluster',e:'the public'},
+  {w:'ПРЕДПРИНИМАТЕЛЬСТВО',r:'PRYED-PRI-NI-MÁ-TYIL-STVA',h:'very long ПРЕД+ПРИН compound',e:'entrepreneurship'},
+  {w:'ВЗАИМОДЕЙСТВИЕ',r:'VZA-I-MA-DYÉYS-TVI-YE',h:'ВЗАИМО cluster',e:'interaction'},
+  {w:'ИСКУССТВЕННЫЙ',r:'IS-KÚS-TVYIN-NY',h:'ИСК+УССТВ cluster',e:'artificial'},
+  {w:'ИССЛЕДОВАНИЕ',r:'IS-SLYE-DA-VÁ-NI-YE',h:'double С cluster',e:'research'},
+  {w:'НАБЛЮДЕНИЕ',r:'NAB-LYU-DYÉN-I-YE',h:'НАБ+ЛЮ cluster',e:'observation'},
+  {w:'ВЫЧИСЛЕНИЕ',r:'VY-CHIS-LYÉN-I-YE',h:'ВЫЧ+ИС cluster',e:'calculation'},
+  {w:'ПРОГРАММИРОВАНИЕ',r:'PRA-GRA-MI-RÁ-VA-NI-YE',h:'long ПРОГРАМ compound',e:'programming'},
+  {w:'ЭЛЕКТРИЧЕСТВО',r:'E-LYEK-TRÍCH-ES-TVA',h:'ЭЛЕКТ cluster',e:'electricity'},
+  {w:'МОЛЕКУЛА',r:'MA-LYÉK-U-LA',h:'М=M, Л=L, К=K',e:'molecule'},
+  {w:'АТМОСФЕРА',r:'AT-MAS-FYÉR-A',h:'АТМ+ОС cluster',e:'atmosphere'},
+  {w:'БИОЛОГИЧЕСКИЙ',r:'BI-A-LA-GÍ-CHES-KI',h:'long БИО compound',e:'biological'},
+  {w:'ИНФОРМАЦИОННЫЙ',r:'IN-FAR-MA-TSI-ÓN-NY',h:'ИНФ+ОРМ cluster',e:'informational'},
+  {w:'ЛИТЕРАТУРА',r:'LI-TYE-RA-TÚ-RA',h:'Л=L, Т=T, Р=R twice',e:'literature'},
+  {w:'АРХИТЕКТУРА',r:'AR-KHI-TYEK-TÚ-RA',h:'АРХ cluster',e:'architecture'},
+  {w:'КИНЕМАТОГРАФ',r:'KI-NYE-MA-TÓ-GRAF',h:'long КИНЕ compound',e:'cinema'},
+  {w:'ПРОИЗВЕДЕНИЕ',r:'PRA-IZ-VYE-DYÉN-I-YE',h:'ПРО+ИЗ+ВЕД cluster',e:'work of art'},
+  {w:'СОВРЕМЕННОСТЬ',r:'SAV-RYE-MYÉN-NAST',h:'СОВ+РЕМ cluster',e:'modernity'},
+  {w:'ТВОРЧЕСТВО',r:'TVOR-CHES-TVA',h:'ТВО cluster',e:'creativity'},
+  {w:'ВОСПРИЯТИЕ',r:'VAS-PRI-YÁ-TI-YE',h:'ВОСП+РИЯ cluster',e:'perception'},
+  {w:'СОДЕРЖАНИЕ',r:'SA-DYER-ZHÁN-I-YE',h:'СОД+ЕРЖ cluster',e:'content'},
+  {w:'РАЗОЧАРОВАНИЕ',r:'RA-ZA-CHA-RÁ-VA-NI-YE',h:'РАЗ+ОЧА cluster',e:'disappointment'},
+  {w:'ЗДРАВООХРАНЕНИЕ',r:'ZDRA-VA-AKHH-RA-NYÉN-I-YE',h:'ЗДРАВ+ОХРАН compound',e:'healthcare'},
+  {w:'ПСИХОЛОГИЯ',r:'PSI-KHA-LÓ-GI-YA',h:'ПСИ cluster',e:'psychology'},
+  {w:'ФИЗИОЛОГИЯ',r:'FI-ZI-A-LÓ-GI-YA',h:'ФИЗ+ИОЛ cluster',e:'physiology'},
+  {w:'СТОМАТОЛОГИЯ',r:'STA-MA-TA-LÓ-GI-YA',h:'СТОМ+АТО cluster',e:'dentistry'},
+  {w:'ХИРУРГИЧЕСКИЙ',r:'KHI-RUR-GÍ-CHES-KI',h:'ХИР+УРГ cluster',e:'surgical'},
+  {w:'ВЫЗДОРОВЛЕНИЕ',r:'VYZ-DÓ-RAV-LYÉN-I-YE',h:'ВЫЗ+ДОР cluster',e:'recovery'},
+  {w:'ПРОИЗВОДИТЕЛЬНОСТЬ',r:'PRA-IZ-VA-DÍ-TYIL-NAST',h:'very long ПРОИЗ+ВОД',e:'productivity'},
+  {w:'КОНКУРЕНТОСПОСОБНОСТЬ',r:'KAN-KU-RYENT-A-SPA-SÓB-NAST',h:'extremely long compound',e:'competitiveness'},
+  {w:'НАЛОГООБЛОЖЕНИЕ',r:'NA-LA-GA-AB-LA-ZHÉN-I-YE',h:'НАЛОГ+ОБЛОЖЕНИЕ',e:'taxation'},
+  {w:'БЮРОКРАТИЯ',r:'BYU-RAK-RÁ-TI-YA',h:'БЮ=BYU cluster',e:'bureaucracy'},
+  {w:'РАЦИОНАЛИЗАЦИЯ',r:'RA-TSI-A-NA-LI-ZÁ-TSI-YA',h:'long РАЦ compound',e:'rationalisation'},
+  {w:'ПУТЕШЕСТВИЕ',r:'PU-TYI-SHÉST-VI-YE',h:'ПУТ+ЕШЕ cluster',e:'journey'},
+  {w:'ОКРУЖАЮЩИЙ',r:'AK-RU-ZHÁ-YU-SHCHI',h:'ОКР+УЖА cluster',e:'surrounding'},
+  {w:'ЗЕМЛЕТРЯСЕНИЕ',r:'ZYEM-LYE-TRYA-SYÉN-I-YE',h:'ЗЕМЛ+ТРЯС cluster',e:'earthquake'},
+  {w:'ВОДОХРАНИЛИЩЕ',r:'VA-DA-KHHRA-NÍ-LI-SHCHE',h:'ВОД+О+ХРАН cluster',e:'reservoir'},
+  {w:'НЕПРЕДСКАЗУЕМЫЙ',r:'NYE-PRYED-SKA-ZÚ-YE-MY',h:'НЕ+ПРЕД+СКА cluster',e:'unpredictable'},
+  {w:'ЗАМЕЧАТЕЛЬНЫЙ',r:'ZA-MYE-CHA-TYIL-NY',h:'ЗАМ+ЕЧА cluster',e:'remarkable'},
+  {w:'НЕОБЫКНОВЕННЫЙ',r:'NYE-A-BYK-NA-VYÉN-NY',h:'НЕО+БЫ cluster',e:'extraordinary'},
+  {w:'СООТВЕТСТВУЮЩИЙ',r:'SA-AT-VYÉT-STVU-YU-SHCHI',h:'very long СОО+ТВЕ cluster',e:'corresponding'},
+  {w:'РАЗНООБРАЗНЫЙ',r:'RAZ-NA-AB-RÁZ-NY',h:'РАЗ+НО cluster',e:'diverse'},
+  {w:'БЕССМЕРТНЫЙ',r:'BYES-SMYÉRT-NY',h:'БЕС+СМЕРТ cluster',e:'immortal'},
+  {w:'УДОВЛЕТВОРЁННЫЙ',r:'U-DAV-LYET-VA-RYÓN-NY',h:'long У+ДОВ cluster',e:'satisfied'},
+  {w:'НЕОСОЗНАННЫЙ',r:'NYE-AS-ÓZ-NAN-NY',h:'НЕО+СОЗ cluster',e:'unconscious'},
+  {w:'СОСРЕДОТОЧЕННЫЙ',r:'SAS-RYE-DA-TÓ-CHEN-NY',h:'very long СОС+РЕД',e:'concentrated'},
+  {w:'ВЗАИМОСВЯЗЬ',r:'VZA-I-MA-SVYÁZ',h:'ВЗАИМО + СВЯЗЬ cluster',e:'interconnection'},
+  {w:'НРАВСТВЕННОСТЬ',r:'NRÁF-STVEN-NAST',h:'НРА+ВСТВ cluster',e:'morality'},
+  {w:'НЕПОСТОЯНСТВО',r:'NYE-PAS-TA-YÁN-STVA',h:'НЕ+ПОСТ+ОЯН cluster',e:'inconstancy'},
+  {w:'САМОПОЖЕРТВОВАНИЕ',r:'SA-MA-PA-ZHÉRT-VA-VA-NI-YE',h:'very long САМО+ЖЕРТВ',e:'self-sacrifice'},
+  {w:'ДЕЙСТВИТЕЛЬНОСТЬ',r:'DYEYS-TVI-TYIL-NAST',h:'ДЕЙСТВ+ИТ cluster',e:'reality'},
+  {w:'БЕССОЗНАТЕЛЬНОЕ',r:'BYES-SAZ-NÁ-TYIL-NA-YE',h:'БЕС prefix, long word',e:'the unconscious'},
+  {w:'САМОСОВЕРШЕНСТВОВАНИЕ',r:'SA-MA-SA-VYER-SHENS-TVA-VA-NI-YE',h:'very long САМО compound',e:'self-improvement'},
+  {w:'ВЗАИМООТНОШЕНИЯ',r:'VZA-I-MA-AT-NA-SHYÉ-NI-YA',h:'ВЗАИМО + ОТНОШ cluster',e:'mutual relations'},
+  {w:'ЗАКОНОДАТЕЛЬНЫЙ',r:'ZA-KA-NA-DÁ-TYIL-NY',h:'ЗАК+НОД cluster',e:'legislative'},
+  {w:'НЕУДОВЛЕТВОРИТЕЛЬНЫЙ',r:'NYE-U-DAV-LYET-VA-RÍ-TYIL-NY',h:'extremely long НЕУ compound',e:'unsatisfactory'},
+  {w:'ПРЕДПРИНИМАТЕЛЬСКИЙ',r:'PRYED-PRI-NI-MÁ-TYIL-SKI',h:'longest adjective form',e:'entrepreneurial'},
+];
+var WL3=[
+  {w:'ЗДРАВСТВУЙТЕ',r:'ZDRÁS-TVUY-TYE',h:'В almost silent in ЗДРАВСТВ',e:'hello (formal)'},
+  {w:'ПОЖАЛУЙСТА',r:'PA-ZHÁL-STA',h:'Ж=ZH, Л=L, СТ cluster',e:'please / you\'re welcome'},
+  {w:'ПОЗДРАВЛЯЮ',r:'PAZD-RAV-LYÁ-YU',h:'ЗД cluster, В=V, Я=YA',e:'congratulations'},
+  {w:'ДОГОВОРИЛИСЬ',r:'DA-GA-VA-RÍ-LIS',h:'Г=G, В=V, Р=R, Л=L',e:'it\'s a deal / agreed'},
+  {w:'ВОЗМОЖНОСТЬ',r:'VAZ-MÓZH-NOST',h:'В=V, З=Z, Ж=ZH, СТ cluster',e:'possibility'},
+  {w:'ПОНИМАНИЕ',r:'PA-NI-MÁ-NI-YE',h:'П=P, Н=N, М=M, Н=N',e:'understanding'},
+  {w:'НАСТРОЕНИЕ',r:'NAS-TRA-YÉ-NI-YE',h:'Н=N, С=S, Т=T, Р=R',e:'mood'},
+  {w:'ОБРАЗОВАНИЕ',r:'AB-RA-ZA-VÁ-NI-YE',h:'Б=B, Р=R, З=Z, В=V',e:'education'},
+  {w:'ТЕМПЕРАТУРА',r:'TYEM-PYE-RA-TÚ-RA',h:'Т=T, М=M, Р=R, Т=T, Р=R',e:'temperature'},
+  {w:'НАВОДНЕНИЕ',r:'NA-VAD-NYÉ-NI-YE',h:'В=V, Д=D, Н=N twice',e:'flood'},
+  {w:'ПЕРЕВОДЧИК',r:'PYI-RYI-VÓD-CHIK',h:'Р=R, В=V, Д=D, Ч=CH',e:'translator'},
+  {w:'МЕДИЦИНА',r:'MYE-DI-TSÍ-NA',h:'М=M, Д=D, Ц=TS, Н=N',e:'medicine'},
+  {w:'УНИВЕРСИТЕТ',r:'U-NI-VYER-SI-TYÉT',h:'В=V, Р=R, С=S, Т=T',e:'university'},
+  {w:'БИБЛИОТЕКА',r:'BIB-LI-O-TYÉ-KA',h:'Б=B twice, Л=L, Т=T, К=K',e:'library'},
+  {w:'ГОСУДАРСТВО',r:'GA-SU-DÁRST-VA',h:'Г=G, С=S, Д=D, СТВ cluster',e:'state'},
+  {w:'СПЕЦИАЛЬНОСТЬ',r:'SPYE-TSI-ÁL-NOST',h:'СП cluster, Ц=TS, Л=L',e:'specialty / field'},
+  {w:'ОТНОШЕНИЯ',r:'AT-NA-SHYÉ-NI-YA',h:'Т=T, Н=N, Ш=SH, Я=YA',e:'relationships'},
+  {w:'ДОСТИЖЕНИЕ',r:'DAS-TI-ZHYÉ-NI-YE',h:'Д=D, С=S, Т=T, Ж=ZH',e:'achievement'},
+  {w:'БЛАГОДАРНОСТЬ',r:'BLA-GA-DÁR-NOST',h:'БЛ cluster, Г=G, Р=R',e:'gratitude'},
+  {w:'СОТРУДНИЧЕСТВО',r:'SAT-RÚD-NI-CHYE-STVA',h:'С=S, Т=T, Р=R, Д=D, Ч=CH',e:'cooperation'},
+  {w:'РАСПИСАНИЕ',r:'RAS-PI-SÁ-NI-YE',h:'Р=R, С=S twice, П=P, Н=N',e:'timetable / schedule'},
+  {w:'ПРАВИТЕЛЬСТВО',r:'PRA-VÍ-TYEL-STVA',h:'ПР cluster, В=V, Т=T, СТВ cluster',e:'government'},
+  {w:'ПРОИЗНОШЕНИЕ',r:'PRA-IZ-NA-SHYÉ-NI-YE',h:'ПР, З=Z, Н=N, Ш=SH',e:'pronunciation'},
+  {w:'ОТВЕТСТВЕННОСТЬ',r:'AT-VYÉT-STVIN-NOST',h:'В=V, Т=T, СТВ cluster',e:'responsibility'},
+  {w:'ДОСТОПРИМЕЧАТЕЛЬНОСТЬ',r:'DAS-TA-PRI-MYI-CHÁ-TYIL-NOST',h:'very long — sound each syllable!',e:'tourist attraction'},
+  {w:'МИРОВОЗЗРЕНИЕ',r:'MI-RA-VAZ-ZRYÉ-NI-YE',h:'МИР + world-view compound',e:'worldview'},
+  {w:'САМОСОЗНАНИЕ',r:'SA-MA-SAZ-NÁ-NI-YE',h:'САМО + self-awareness',e:'self-awareness'},
+  {w:'ЧЕЛОВЕЧЕСТВО',r:'CHE-LA-VYÉCH-ES-TVA',h:'ЧЕЛ=person, -ЕСТВО suffix',e:'humanity'},
+  {w:'СОСТРАДАНИЕ',r:'SAS-TRA-DÁ-NI-YE',h:'СО + страдание',e:'compassion'},
+  {w:'ВДОХНОВЕНИЕ',r:'VDA-KH-NA-VYÉN-I-YE',h:'В+ДОХ+НОВ cluster',e:'inspiration'},
+  {w:'ВООБРАЖЕНИЕ',r:'VA-AB-RA-ZHÉN-I-YE',h:'long О cluster',e:'imagination'},
+  {w:'НЕОПРЕДЕЛЁННОСТЬ',r:'NYE-AP-RYE-DYE-LYÓN-NAST',h:'НЕО prefix cluster',e:'uncertainty'},
+  {w:'ПРОТИВОРЕЧИЕ',r:'PRA-TI-VA-RYÉCH-I-YE',h:'ПРОТИВ + РЕЧ cluster',e:'contradiction'},
+  {w:'ЗАКОНОМЕРНОСТЬ',r:'ZA-KA-NA-MYÉR-NAST',h:'ЗАКОН + МЕРНОСТЬ',e:'pattern'},
+  {w:'ПОСЛЕДОВАТЕЛЬНОСТЬ',r:'PAS-LYÉD-A-VA-TYIL-NAST',h:'very long -НОСТЬ suffix',e:'consistency'},
+  {w:'САМОДОСТАТОЧНОСТЬ',r:'SA-MA-DAS-TÁ-TACH-NAST',h:'САМО + ДОСТА cluster',e:'self-sufficiency'},
+  {w:'КОНСТИТУЦИЯ',r:'KAN-STI-TÚ-TSI-YA',h:'КОН+СТИ+ТУЦ cluster',e:'constitution'},
+  {w:'НЕЗАВИСИМОСТЬ',r:'NYE-ZA-VÍ-SI-MAST',h:'НЕ+ЗАВИСИ+МОСТЬ',e:'independence'},
+  {w:'ДЕМОКРАТИЯ',r:'DYE-MAK-RÁ-TI-YA',h:'Д=D, М=M, К=K, Р=R',e:'democracy'},
+  {w:'ГРАЖДАНСТВО',r:'GRAZH-DÁN-STVA',h:'ГРАЖ cluster',e:'citizenship'},
+  {w:'ЗАКОНОДАТЕЛЬСТВО',r:'ZA-KA-NA-DÁ-TYIL-STVA',h:'very long ЗАК+НОД compound',e:'legislation'},
+  {w:'МЕЖДУНАРОДНЫЙ',r:'MYEZH-DU-NA-RÓD-NY',h:'МЕЖД cluster',e:'international'},
+  {w:'СПРАВЕДЛИВОСТЬ',r:'SPRA-VYI-DLÍ-VAST',h:'СПРАВ+ДЛИ cluster',e:'justice'},
+  {w:'ОБЩЕСТВЕННОСТЬ',r:'AB-SHCHES-TVYEN-NAST',h:'ОБЩ cluster',e:'the public'},
+  {w:'ПРЕДПРИНИМАТЕЛЬСТВО',r:'PRYED-PRI-NI-MÁ-TYIL-STVA',h:'very long ПРЕД+ПРИН',e:'entrepreneurship'},
+  {w:'ВЗАИМОДЕЙСТВИЕ',r:'VZA-I-MA-DYÉYS-TVI-YE',h:'ВЗАИМО cluster',e:'interaction'},
+  {w:'ИСКУССТВЕННЫЙ',r:'IS-KÚS-TVYIN-NY',h:'ИСК+УССТВ cluster',e:'artificial'},
+  {w:'ИССЛЕДОВАНИЕ',r:'IS-SLYE-DA-VÁ-NI-YE',h:'double С cluster',e:'research'},
+  {w:'НАБЛЮДЕНИЕ',r:'NAB-LYU-DYÉN-I-YE',h:'НАБ+ЛЮ cluster',e:'observation'},
+  {w:'ВЫЧИСЛЕНИЕ',r:'VY-CHIS-LYÉN-I-YE',h:'ВЫЧ+ИС cluster',e:'calculation'},
+  {w:'ПРОГРАММИРОВАНИЕ',r:'PRA-GRA-MI-RÁ-VA-NI-YE',h:'long ПРОГРАМ compound',e:'programming'},
+  {w:'ЭЛЕКТРИЧЕСТВО',r:'E-LYEK-TRÍCH-ES-TVA',h:'ЭЛЕКТ cluster',e:'electricity'},
+  {w:'МОЛЕКУЛА',r:'MA-LYÉK-U-LA',h:'М=M, Л=L, К=K',e:'molecule'},
+  {w:'АТМОСФЕРА',r:'AT-MAS-FYÉR-A',h:'АТМ+ОС cluster',e:'atmosphere'},
+  {w:'БИОЛОГИЧЕСКИЙ',r:'BI-A-LA-GÍ-CHES-KI',h:'long БИО compound',e:'biological'},
+  {w:'ИНФОРМАЦИОННЫЙ',r:'IN-FAR-MA-TSI-ÓN-NY',h:'ИНФ+ОРМ cluster',e:'informational'},
+  {w:'ЛИТЕРАТУРА',r:'LI-TYE-RA-TÚ-RA',h:'Л=L, Т=T, Р=R twice',e:'literature'},
+  {w:'АРХИТЕКТУРА',r:'AR-KHI-TYEK-TÚ-RA',h:'АРХ cluster',e:'architecture'},
+  {w:'КИНЕМАТОГРАФ',r:'KI-NYE-MA-TÓ-GRAF',h:'long КИНЕ compound',e:'cinema'},
+  {w:'ПРОИЗВЕДЕНИЕ',r:'PRA-IZ-VYE-DYÉN-I-YE',h:'ПРО+ИЗ+ВЕД cluster',e:'work of art'},
+  {w:'СОВРЕМЕННОСТЬ',r:'SAV-RYE-MYÉN-NAST',h:'СОВ+РЕМ cluster',e:'modernity'},
+  {w:'ТВОРЧЕСТВО',r:'TVOR-CHES-TVA',h:'ТВО cluster',e:'creativity'},
+  {w:'ВОСПРИЯТИЕ',r:'VAS-PRI-YÁ-TI-YE',h:'ВОСП+РИЯ cluster',e:'perception'},
+  {w:'СОДЕРЖАНИЕ',r:'SA-DYER-ZHÁN-I-YE',h:'СОД+ЕРЖ cluster',e:'content'},
+  {w:'РАЗОЧАРОВАНИЕ',r:'RA-ZA-CHA-RÁ-VA-NI-YE',h:'РАЗ+ОЧА cluster',e:'disappointment'},
+  {w:'ЗДРАВООХРАНЕНИЕ',r:'ZDRA-VA-AKHH-RA-NYÉN-I-YE',h:'ЗДРАВ+ОХРАН compound',e:'healthcare'},
+  {w:'ПСИХОЛОГИЯ',r:'PSI-KHA-LÓ-GI-YA',h:'ПСИ cluster',e:'psychology'},
+  {w:'ФИЗИОЛОГИЯ',r:'FI-ZI-A-LÓ-GI-YA',h:'ФИЗ+ИОЛ cluster',e:'physiology'},
+  {w:'СТОМАТОЛОГИЯ',r:'STA-MA-TA-LÓ-GI-YA',h:'СТОМ+АТО cluster',e:'dentistry'},
+  {w:'ХИРУРГИЧЕСКИЙ',r:'KHI-RUR-GÍ-CHES-KI',h:'ХИР+УРГ cluster',e:'surgical'},
+  {w:'ВЫЗДОРОВЛЕНИЕ',r:'VYZ-DÓ-RAV-LYÉN-I-YE',h:'ВЫЗ+ДОР cluster',e:'recovery'},
+  {w:'ПРОИЗВОДИТЕЛЬНОСТЬ',r:'PRA-IZ-VA-DÍ-TYIL-NAST',h:'very long ПРОИЗ+ВОД',e:'productivity'},
+  {w:'КОНКУРЕНТОСПОСОБНОСТЬ',r:'KAN-KU-RYENT-A-SPA-SÓB-NAST',h:'extremely long compound',e:'competitiveness'},
+  {w:'НАЛОГООБЛОЖЕНИЕ',r:'NA-LA-GA-AB-LA-ZHÉN-I-YE',h:'НАЛОГ+ОБЛОЖЕНИЕ',e:'taxation'},
+  {w:'БЮРОКРАТИЯ',r:'BYU-RAK-RÁ-TI-YA',h:'БЮ=BYU cluster',e:'bureaucracy'},
+  {w:'РАЦИОНАЛИЗАЦИЯ',r:'RA-TSI-A-NA-LI-ZÁ-TSI-YA',h:'long РАЦ compound',e:'rationalisation'},
+  {w:'ПУТЕШЕСТВИЕ',r:'PU-TYI-SHÉST-VI-YE',h:'ПУТ+ЕШЕ cluster',e:'journey'},
+  {w:'ОКРУЖАЮЩИЙ',r:'AK-RU-ZHÁ-YU-SHCHI',h:'ОКР+УЖА cluster',e:'surrounding'},
+  {w:'ЗЕМЛЕТРЯСЕНИЕ',r:'ZYEM-LYE-TRYA-SYÉN-I-YE',h:'ЗЕМЛ+ТРЯС cluster',e:'earthquake'},
+  {w:'ВОДОХРАНИЛИЩЕ',r:'VA-DA-KHHRA-NÍ-LI-SHCHE',h:'ВОД+О+ХРАН cluster',e:'reservoir'},
+  {w:'НЕПРЕДСКАЗУЕМЫЙ',r:'NYE-PRYED-SKA-ZÚ-YE-MY',h:'НЕ+ПРЕД+СКА cluster',e:'unpredictable'},
+  {w:'ЗАМЕЧАТЕЛЬНЫЙ',r:'ZA-MYE-CHA-TYIL-NY',h:'ЗАМ+ЕЧА cluster',e:'remarkable'},
+  {w:'НЕОБЫКНОВЕННЫЙ',r:'NYE-A-BYK-NA-VYÉN-NY',h:'НЕО+БЫ cluster',e:'extraordinary'},
+  {w:'СООТВЕТСТВУЮЩИЙ',r:'SA-AT-VYÉT-STVU-YU-SHCHI',h:'very long СОО+ТВЕ cluster',e:'corresponding'},
+  {w:'РАЗНООБРАЗНЫЙ',r:'RAZ-NA-AB-RÁZ-NY',h:'РАЗ+НО cluster',e:'diverse'},
+  {w:'БЕССМЕРТНЫЙ',r:'BYES-SMYÉRT-NY',h:'БЕС+СМЕРТ cluster',e:'immortal'},
+  {w:'УДОВЛЕТВОРЁННЫЙ',r:'U-DAV-LYET-VA-RYÓN-NY',h:'long У+ДОВ cluster',e:'satisfied'},
+  {w:'НЕОСОЗНАННЫЙ',r:'NYE-AS-ÓZ-NAN-NY',h:'НЕО+СОЗ cluster',e:'unconscious'},
+  {w:'СОСРЕДОТОЧЕННЫЙ',r:'SAS-RYE-DA-TÓ-CHEN-NY',h:'very long СОС+РЕД',e:'concentrated'},
+  {w:'ВЗАИМОСВЯЗЬ',r:'VZA-I-MA-SVYÁZ',h:'ВЗАИМО + СВЯЗЬ cluster',e:'interconnection'},
+  {w:'НРАВСТВЕННОСТЬ',r:'NRÁF-STVEN-NAST',h:'НРА+ВСТВ cluster',e:'morality'},
+  {w:'НЕПОСТОЯНСТВО',r:'NYE-PAS-TA-YÁN-STVA',h:'НЕ+ПОСТ+ОЯН cluster',e:'inconstancy'},
+  {w:'САМОПОЖЕРТВОВАНИЕ',r:'SA-MA-PA-ZHÉRT-VA-VA-NI-YE',h:'very long САМО+ЖЕРТВ',e:'self-sacrifice'},
+  {w:'ДЕЙСТВИТЕЛЬНОСТЬ',r:'DYEYS-TVI-TYIL-NAST',h:'ДЕЙСТВ+ИТ cluster',e:'reality'},
+  {w:'БЕССОЗНАТЕЛЬНОЕ',r:'BYES-SAZ-NÁ-TYIL-NA-YE',h:'БЕС prefix, long word',e:'the unconscious'},
+  {w:'САМОСОВЕРШЕНСТВОВАНИЕ',r:'SA-MA-SA-VYER-SHENS-TVA-VA-NI-YE',h:'very long САМО compound',e:'self-improvement'},
+  {w:'ВЗАИМООТНОШЕНИЯ',r:'VZA-I-MA-AT-NA-SHYÉ-NI-YA',h:'ВЗАИМО + ОТНОШ cluster',e:'mutual relations'},
+  {w:'ЗАКОНОДАТЕЛЬНЫЙ',r:'ZA-KA-NA-DÁ-TYIL-NY',h:'ЗАК+НОД cluster',e:'legislative'},
+  {w:'НЕУДОВЛЕТВОРИТЕЛЬНЫЙ',r:'NYE-U-DAV-LYET-VA-RÍ-TYIL-NY',h:'extremely long НЕУ compound',e:'unsatisfactory'},
+  {w:'ПРЕДПРИНИМАТЕЛЬСКИЙ',r:'PRYED-PRI-NI-MÁ-TYIL-SKI',h:'longest adjective form',e:'entrepreneurial'},
+  {w:'ВЗАИМОПОНИМАНИЕ',r:'VZA-I-MA-PA-NI-MÁ-NI-YE',h:'ВЗАИМО + ПОНИМАНИЕ cluster',e:'mutual understanding'},
+];
+var PL1=[
+  // Greetings
+  {c:'Доброе утро!',        r:'DÓB-RA-YE ÚT-RA!',            e:'Good morning!'},
+  {c:'Добрый день!',        r:'DÓB-RY DYÉN!',                 e:'Good afternoon!'},
+  {c:'Добрый вечер!',       r:'DÓB-RY VYÉ-CHIR!',            e:'Good evening!'},
+  {c:'Спокойной ночи!',     r:'SPA-KÓY-NAY NÓ-CHI!',         e:'Good night!'},
+  {c:'Привет!',             r:'PRI-VYÉT!',                   e:'Hi!'},
+  {c:'Здравствуйте!',       r:'ZDRÁS-TVUY-TYE!',             e:'Hello! (formal)'},
+  {c:'Пока!',               r:'PA-KÁ!',                      e:'Bye!'},
+  {c:'До свидания!',        r:'DA SVI-DÁ-NI-YA!',            e:'Goodbye!'},
+  {c:'Как дела?',           r:'KAK DYI-LÁ?',                 e:'How are you?'},
+  {c:'Хорошо, спасибо.',    r:'KHA-RA-SHÓ SPA-SÍ-BA.',       e:'Fine, thanks.'},
+  {c:'Всё хорошо.',         r:'VSYO KHA-RA-SHÓ.',            e:'Everything is fine.'},
+  // Basics
+  {c:'Да.',                 r:'DÁ.',                         e:'Yes.'},
+  {c:'Нет.',                r:'NYÉT.',                       e:'No.'},
+  {c:'Может быть.',         r:'MÓ-ZHET BYT.',                e:'Maybe.'},
+  {c:'Хорошо!',             r:'KHA-RA-SHÓ!',                 e:'OK! / Good!'},
+  {c:'Ладно.',              r:'LÁD-NA.',                     e:'Alright.'},
+  {c:'Конечно!',            r:'KA-NYÉSH-NA!',                e:'Of course!'},
+  {c:'Понятно.',            r:'PA-NYÁT-NA.',                 e:'Understood.'},
+  {c:'Спасибо!',            r:'SPA-SÍ-BA!',                  e:'Thank you!'},
+  {c:'Пожалуйста!',         r:'PA-ZHÁL-STA!',                e:'You\'re welcome!'},
+  {c:'Извините.',           r:'IZ-VI-NÍ-TYE.',               e:'Excuse me.'},
+  {c:'Простите!',           r:'PRAS-TÍ-TYE!',                e:'I\'m sorry!'},
+  // Family & home
+  {c:'Это мама.',           r:'É-TA MÁ-MA.',                 e:'This is mom.'},
+  {c:'Это папа.',           r:'É-TA PÁ-PA.',                 e:'This is dad.'},
+  {c:'Это мой брат.',       r:'É-TA MÓY BRÁT.',              e:'This is my brother.'},
+  {c:'Это моя сестра.',     r:'É-TA MA-YÁ SIS-TRÁ.',         e:'This is my sister.'},
+  {c:'Мама дома.',          r:'MÁ-MA DÓ-MA.',                e:'Mom is at home.'},
+  {c:'Папа работает.',      r:'PÁ-PA RA-BÓ-TA-YIT.',         e:'Dad is working.'},
+  {c:'Мой брат дома.',      r:'MÓY BRÁT DÓ-MA.',             e:'My brother is at home.'},
+  {c:'Это мой дом.',        r:'É-TA MÓY DÓM.',               e:'This is my house.'},
+  {c:'Я дома.',             r:'YA DÓ-MA.',                   e:'I\'m at home.'},
+  {c:'Иди домой!',          r:'I-DÍ DA-MÓY!',                e:'Go home!'},
+  {c:'Идём домой!',         r:'I-DYÓM DA-MÓY!',              e:'Let\'s go home!'},
+  // Animals
+  {c:'Кот голоден.',        r:'KÓT GA-LÓ-DYEN.',             e:'The cat is hungry.'},
+  {c:'Пёс дома.',           r:'PYÓS DÓ-MA.',                 e:'The dog is at home.'},
+  {c:'У меня есть кот.',    r:'U MYI-NYÁ YEST KÓT.',         e:'I have a cat.'},
+  {c:'Это моя собака.',     r:'É-TA MA-YÁ SA-BÁ-KA.',        e:'This is my dog.'},
+  // Weather
+  {c:'Идёт дождь.',         r:'I-DYÓT DÓZHD.',               e:'It\'s raining.'},
+  {c:'Идёт снег.',          r:'I-DYÓT SNÝEK.',               e:'It\'s snowing.'},
+  {c:'Сегодня холодно.',    r:'SI-VÓD-NYA KHÓ-LAD-NA.',      e:'It\'s cold today.'},
+  {c:'Сегодня жарко.',      r:'SI-VÓD-NYA ZHÁR-KA.',         e:'It\'s hot today.'},
+  {c:'Сегодня тепло.',      r:'SI-VÓD-NYA TYIP-LÓ.',         e:'It\'s warm today.'},
+  {c:'Хорошая погода!',     r:'KHA-RÓ-SHA-YA PA-GÓ-DA!',     e:'Good weather!'},
+  {c:'Плохая погода.',      r:'PLA-KHÁ-YA PA-GÓ-DA.',        e:'Bad weather.'},
+  {c:'Солнечно!',           r:'SÓL-NYICH-NA!',               e:'It\'s sunny!'},
+  {c:'Облачно.',            r:'ÓB-LACH-NA.',                 e:'It\'s cloudy.'},
+  {c:'Ветрено.',            r:'VYÉT-RYI-NA.',                e:'It\'s windy.'},
+  // Food & drink
+  {c:'Я хочу чай.',         r:'YA KHA-CHÚ CHÁY.',            e:'I want tea.'},
+  {c:'Я хочу кофе.',        r:'YA KHA-CHÚ KÓ-FYE.',          e:'I want coffee.'},
+  {c:'Дайте воды.',         r:'DÁY-TYE VA-DÝ.',              e:'Give me some water.'},
+  {c:'Вода, пожалуйста.',   r:'VA-DÁ PA-ZHÁL-STA.',          e:'Water, please.'},
+  {c:'Вот хлеб.',           r:'VÓT KHLYÉP.',                  e:'Here is some bread.'},
+  {c:'Это вкусно!',         r:'É-TA VKÚS-NA!',               e:'This is delicious!'},
+  {c:'Я голоден.',          r:'YA GA-LÓ-DYEN.',              e:'I\'m hungry.'},
+  {c:'Я не голоден.',       r:'YA NYÉ GA-LÓ-DYEN.',          e:'I\'m not hungry.'},
+  {c:'Дайте меню.',         r:'DÁY-TYE MYI-NYÚ.',            e:'Give me the menu.'},
+  {c:'Счёт, пожалуйста.',   r:'SCHYÓT PA-ZHÁL-STA.',         e:'The bill, please.'},
+  {c:'Один чай.',           r:'A-DÍN CHÁY.',                 e:'One tea.'},
+  {c:'Два кофе.',           r:'DVÁ KÓ-FYE.',                 e:'Two coffees.'},
+  // Health & feelings
+  {c:'Мне холодно.',        r:'MNYE KHÓ-LAD-NA.',            e:'I\'m cold.'},
+  {c:'Мне жарко.',          r:'MNYE ZHÁR-KA.',               e:'I\'m hot.'},
+  {c:'Мне хорошо.',         r:'MNYE KHA-RA-SHÓ.',            e:'I feel good.'},
+  {c:'Мне плохо.',          r:'MNYE PLÓ-KHA.',               e:'I feel bad.'},
+  {c:'Мне скучно.',         r:'MNYE SKÚSH-NA.',              e:'I\'m bored.'},
+  {c:'Я устал.',            r:'YA US-TÁL.',                  e:'I\'m tired. (masc)'},
+  {c:'Я устала.',           r:'YA US-TÁ-LA.',                e:'I\'m tired. (fem)'},
+  {c:'Мне больно.',         r:'MNYE BÓL-NA.',                e:'It hurts.'},
+  {c:'Я болею.',            r:'YA BA-LYÉY-U.',               e:'I\'m sick.'},
+  {c:'Мне нравится.',       r:'MNYE NRÁ-VI-TSA.',            e:'I like it.'},
+  // Help & essentials
+  {c:'Где врач?',           r:'GDYE VRÁCH?',                 e:'Where is the doctor?'},
+  {c:'Где туалет?',         r:'GDYE TU-A-LYÉT?',             e:'Where is the toilet?'},
+  {c:'Помогите!',           r:'PA-MA-GÍ-TYE!',               e:'Help!'},
+  {c:'Вызовите врача!',     r:'VÝ-ZA-VI-TYE VRA-CHÁ!',       e:'Call a doctor!'},
+  {c:'Я не знаю.',          r:'YA NYÉ ZNÁ-YU.',              e:'I don\'t know.'},
+  {c:'Не понимаю.',         r:'NYÉ PA-NI-MÁ-YU.',            e:'I don\'t understand.'},
+  // Directions
+  {c:'Налево.',             r:'NA-LYÉV-A.',                  e:'To the left.'},
+  {c:'Направо.',            r:'NA-PRÁ-VA.',                  e:'To the right.'},
+  {c:'Прямо.',              r:'PRYÁ-MA.',                    e:'Straight ahead.'},
+  {c:'Здесь.',              r:'ZDYÉS.',                      e:'Here.'},
+  {c:'Там.',                r:'TÁM.',                        e:'There.'},
+  {c:'Близко.',             r:'BLÍS-KA.',                    e:'Close by.'},
+  {c:'Далеко.',             r:'DA-LYI-KÓ.',                  e:'Far away.'},
+  {c:'Где метро?',          r:'GDYE MYIT-RÓ?',               e:'Where is the metro?'},
+  {c:'Где автобус?',        r:'GDYE AV-TÓ-BUS?',             e:'Where is the bus?'},
+  {c:'Где выход?',          r:'GDYE VÝ-KHAT?',               e:'Where is the exit?'},
+  // Shopping
+  {c:'Сколько стоит?',      r:'SKÓL-KA STÓ-IT?',             e:'How much is it?'},
+  {c:'Это дорого.',         r:'É-TA DÓ-RA-GA.',              e:'That\'s expensive.'},
+  {c:'Это дёшево.',         r:'É-TA DYÓW-SHI-VA.',            e:'That\'s cheap.'},
+  // Nature & time
+  {c:'Это море.',           r:'É-TA MÓ-RYE.',                e:'That\'s the sea.'},
+  {c:'Красивый лес!',       r:'KRA-SÍ-VY LYÉS!',             e:'Beautiful forest!'},
+  {c:'Уже поздно.',         r:'U-ZHÉ PÓZD-NA.',              e:'It\'s already late.'},
+  {c:'Ещё рано.',           r:'YI-SHCHÓ RÁ-NA.',             e:'It\'s still early.'},
+  {c:'Скоро.',              r:'SKÓ-RA.',                     e:'Soon.'},
+  {c:'Один билет.',         r:'A-DÍN BI-LYÉT.',              e:'One ticket.'},
+  {c:'Два билета.',         r:'DVÁ BI-LYÉT-A.',              e:'Two tickets.'},
+  {c:'Это бесплатно.',      r:'É-TA BIS-PLÁT-NA.',           e:'It\'s free.'},
+  {c:'Это не моё.',         r:'É-TA NYÉ MA-YÓ.',             e:'This is not mine.'},
+  {c:'Ничего страшного.',   r:'NI-CHI-VÓ STRÁSH-NA-VA.',     e:'No big deal.'},
+  {c:'Осторожно!',          r:'AS-TA-RÓZH-NA!',              e:'Careful!'},
+  {c:'Тихо!',               r:'TÍ-KHA!',                     e:'Quiet!'},
+  // Numbers
+  {c:'Один.',               r:'A-DÍN.',                      e:'One.'},
+  {c:'Два.',                r:'DVÁ.',                        e:'Two.'},
+  {c:'Три.',                r:'TRÍ.',                        e:'Three.'},
+  {c:'Четыре.',             r:'CHI-TÝ-RYE.',                 e:'Four.'},
+  {c:'Пять.',               r:'PYÁT.',                       e:'Five.'},
+  {c:'Шесть.',              r:'SHÉST.',                      e:'Six.'},
+  {c:'Семь.',               r:'SYÉM.',                       e:'Seven.'},
+  {c:'Восемь.',             r:'VÓ-SIM.',                     e:'Eight.'},
+  {c:'Девять.',             r:'DYÉH-VIT.',                    e:'Nine.'},
+  {c:'Десять.',             r:'DYÉH-SIT.',                    e:'Ten.'},
+  // Time expressions
+  {c:'Который час?',        r:'KA-TÓ-RY CHÁS?',              e:'What time is it?'},
+  {c:'Сейчас два часа.',    r:'SIY-CHÁS DVÁ CHA-SÁ.',        e:'It\'s two o\'clock.'},
+  {c:'Утром.',              r:'ÚT-RAM.',                     e:'In the morning.'},
+  {c:'Вечером.',            r:'VYÉCH-I-RAM.',                e:'In the evening.'},
+  {c:'Ночью.',              r:'NÓCH-YU.',                    e:'At night.'},
+  {c:'Вчера.',              r:'FCHI-RÁ.',                    e:'Yesterday.'},
+  {c:'Вчера вечером.',      r:'FCHI-RÁ VYÉCH-I-RAM.',        e:'Yesterday evening.'},
+  {c:'Завтра утром.',       r:'ZÁV-TRA ÚT-RAM.',             e:'Tomorrow morning.'},
+  // Colours
+  {c:'Красный цвет.',       r:'KRÁS-NY TSVÉT.',              e:'Red colour.'},
+  {c:'Синий цвет.',         r:'SÍ-NIY TSVÉT.',               e:'Blue colour.'},
+  {c:'Белый или чёрный?',   r:'BYÉL-Y Í-LI CHYÓR-NY?',      e:'White or black?'},
+  {c:'Зелёный.',            r:'ZYI-LYÓN-Y.',                 e:'Green.'},
+  {c:'Жёлтый.',             r:'ZHÓL-TY.',                    e:'Yellow.'},
+  // Common objects
+  {c:'Это книга.',          r:'É-TA KNÍ-GA.',                e:'This is a book.'},
+  {c:'Это стол.',           r:'É-TA STÓL.',                  e:'This is a table.'},
+  {c:'Где ключи?',          r:'GDYE KLYU-CHÍ?',              e:'Where are the keys?'},
+  {c:'Дверь открыта.',      r:'DVYER AT-KRÝ-TA.',            e:'The door is open.'},
+  {c:'Окно закрыто.',       r:'AK-NÓ ZA-KRÝ-TA.',           e:'The window is closed.'},
+  // Commands
+  {c:'Подождите!',          r:'PA-DAZH-DÍ-TYE!',             e:'Wait!'},
+  {c:'Смотрите сюда!',      r:'SMAT-RÍ-TYE SYU-DÁ!',        e:'Look here!'},
+  {c:'Слушайте внимательно!',r:'SLÚSH-I-TYE VNI-MÁ-TYIL-NA!',e:'Listen carefully!'},
+  {c:'Иди сюда!',           r:'I-DÍ SYU-DÁ!',               e:'Come here!'},
+  // Meeting people
+  {c:'Как вас зовут?',      r:'KAK VAS ZA-VÚT?',             e:'What\'s your name?'},
+  {c:'Меня зовут Иван.',    r:'MYI-NYÁ ZA-VÚT I-VÁN.',       e:'My name is Ivan.'},
+  {c:'Откуда вы?',          r:'AT-KÚ-DA VY?',                e:'Where are you from?'},
+  {c:'Вы говорите по-русски?',r:'VY GA-VA-RÍ-TYE PA-RÚS-SKI?',e:'Do you speak Russian?'},
+  // Body & health basics
+  {c:'У меня болит голова.', r:'U MYI-NYÁ BA-LÍT GA-LA-VÁ.',  e:'I have a headache.'},
+  {c:'У меня болит живот.',  r:'U MYI-NYÁ BA-LÍT ZHI-VÓT.',   e:'I have a stomachache.'},
+  {c:'Мне нужен врач.',      r:'MNYE NÚ-ZHIN VRÁCH.',          e:'I need a doctor.'},
+  // Simple descriptions
+  {c:'Большой.',             r:'BAL-SHÓY.',                   e:'Big.'},
+  {c:'Маленький.',           r:'MÁ-LIN-KI.',                  e:'Small.'},
+  {c:'Новый.',               r:'NÓ-VY.',                      e:'New.'},
+  {c:'Старый.',              r:'STÁ-RY.',                     e:'Old.'},
+  {c:'Дорогой.',             r:'DA-RA-GÓY.',                  e:'Expensive.'},
+];
+var PL2=[
+  // Introductions
+  {c:'Как вас зовут?',              r:'KAK VAS ZA-VÚT?',                       e:"What's your name? (formal)"},
+  {c:'Меня зовут Анна.',            r:'MYI-NYÁ ZA-VÚT ÁN-NA.',                 e:'My name is Anna.'},
+  {c:'Откуда вы?',                  r:'OT-KÚ-DA VY?',                          e:'Where are you from?'},
+  {c:'Я из России.',                r:'YA IZ RAS-SÍ-I.',                       e:"I'm from Russia."},
+  {c:'Очень приятно!',              r:'Ó-CHIN PRI-YÁT-NA!',                    e:'Very nice to meet you!'},
+  {c:'Сколько вам лет?',            r:'SKÓL-KA VAM LYÉT?',                     e:'How old are you?'},
+  {c:'Мне двадцать лет.',           r:'MNYE DVÁT-TSAT LYÉT.',                  e:'I am twenty years old.'},
+  {c:'Вы живёте в Москве?',         r:'VY ZHI-VYÓT-YE V MASK-VYÉ?',           e:'Do you live in Moscow?'},
+  {c:'Я живу в центре.',            r:'YA ZHI-VÚ F TSÉN-TRE.',                 e:'I live in the centre.'},
+  {c:'Давно здесь живёте?',         r:'DAV-NÓ ZDYÉS ZHI-VYÓT-YE?',            e:'Have you lived here long?'},
+  // Family
+  {c:'Моя семья большая.',          r:'MA-YÁ SIM-YÁ BAL-SHÁ-YA.',              e:'My family is big.'},
+  {c:'У меня есть брат.',           r:'U MYI-NYÁ YEST BRÁT.',                  e:'I have a brother.'},
+  {c:'У меня нет сестры.',          r:'U MYI-NYÁ NYÉT SIS-TRÝ.',               e:"I don't have a sister."},
+  {c:'Мой муж врач.',               r:'MÓY MÚZH VRÁCH.',                       e:'My husband is a doctor.'},
+  {c:'Моя жена учитель.',           r:'MA-YÁ ZHI-NÁ U-CHÍ-TYIL.',              e:'My wife is a teacher.'},
+  {c:'У меня двое детей.',          r:'U MYI-NYÁ DVÓ-YE DYI-TYÉY.',            e:'I have two children.'},
+  {c:'Мой сын учится в школе.',     r:'MÓY SÝN Ú-CHI-TSA F SHKÓ-LYE.',        e:'My son goes to school.'},
+  {c:'Моя дочь занимается спортом.',r:'MA-YÁ DÓCH ZA-NI-MÁ-YIT-SA SPÓR-TAM.', e:'My daughter does sport.'},
+  {c:'Мы живём вместе.',            r:'MY ZHI-VYÓM VMYÉS-TYE.',                e:'We live together.'},
+  // Weather
+  {c:'Какая сегодня погода?',       r:'KA-KÁ-YA SI-VÓD-NYA PA-GÓ-DA?',        e:"What's the weather today?"},
+  {c:'Сегодня хорошая погода.',     r:'SI-VÓD-NYA KHA-RÓ-SHA-YA PA-GÓ-DA.',   e:'The weather is good today.'},
+  {c:'Ожидается дождь.',            r:'A-ZHI-DÁ-YIT-SYA DÓZHD.',              e:'Rain is expected.'},
+  {c:'На улице холодно.',           r:'NA Ú-LI-TSE KHÓ-LAD-NA.',              e:"It's cold outside."},
+  {c:'Я люблю лето.',               r:'YA LYUB-LYÚ LYÉ-TA.',                  e:'I love summer.'},
+  {c:'Зима холодная.',              r:'ZI-MÁ KHA-LÓD-NA-YA.',                 e:'Winter is cold.'},
+  {c:'Осень красивая.',             r:'Ó-SYIN KRA-SÍ-VA-YA.',                 e:'Autumn is beautiful.'},
+  {c:'Зимой часто идёт снег.',      r:'ZI-MÓY CHÁS-TA I-DYÓT SNÝEK.',         e:'It often snows in winter.'},
+  {c:'Летом очень жарко.',          r:'LYÉT-AM Ó-CHIN ZHÁR-KA.',              e:'It\'s very hot in summer.'},
+  {c:'Я не люблю дождь.',           r:'YA NYÉ LYUB-LYÚ DÓZHD.',               e:'I don\'t like rain.'},
+  {c:'Весной всё цветёт.',          r:'VIS-NÓY VSYO TSVI-TYÓT.',              e:'Everything blooms in spring.'},
+  // Food & restaurant
+  {c:'Я хочу есть.',                r:'YA KHA-CHÚ YÉST.',                     e:'I want to eat.'},
+  {c:'Я хочу пить.',                r:'YA KHA-CHÚ PÍT.',                      e:'I want to drink.'},
+  {c:'Принесите меню.',             r:'PRI-NYI-SÍ-TYE MYI-NYÚ.',              e:'Bring the menu.'},
+  {c:'Я не ем мяса.',               r:'YA NYÉ YEM MYÁ-SA.',                   e:"I don't eat meat."},
+  {c:'Счёт, пожалуйста!',           r:'SCHYÓT PA-ZHÁL-STA!',                  e:'The bill, please!'},
+  {c:'Что вы рекомендуете?',        r:'SHTO VY RYI-KA-MEN-DÚ-YI-TYE?',       e:'What do you recommend?'},
+  {c:'Мне это блюдо.',              r:'MNYE É-TA BLYÚ-DA.',                   e:'I\'ll have this dish.'},
+  {c:'Кофе с молоком.',             r:'KÓ-FYE S MA-LA-KÓM.',                  e:'Coffee with milk.'},
+  {c:'Без сахара, пожалуйста.',     r:'BYES SÁ-KHA-RA PA-ZHÁL-STA.',          e:'Without sugar, please.'},
+  {c:'Очень вкусно, спасибо!',      r:'Ó-CHIN VKÚS-NA SPA-SÍ-BA!',            e:'Very tasty, thank you!'},
+  {c:'Я вегетарианец.',             r:'YA VYI-GYI-TA-RI-Á-NYITS.',            e:'I\'m vegetarian. (masc)'},
+  {c:'Столик на двоих.',            r:'STÓ-LIK NA DVA-ÍKH.',                  e:'A table for two.'},
+  // Shopping
+  {c:'Сколько это стоит?',          r:'SKÓL-KA É-TA STÓ-IT?',                 e:'How much does this cost?'},
+  {c:'Это слишком дорого.',         r:'É-TA SLÍSH-KAM DÓ-RA-GA.',             e:"That's too expensive."},
+  {c:'Есть скидка?',                r:'YEST SKÍD-KA?',                        e:'Is there a discount?'},
+  {c:'Я возьму это.',               r:'YA VAZ-MÚ É-TA.',                      e:'I\'ll take this.'},
+  {c:'Можно примерить?',            r:'MÓZH-NA PRI-MYÉR-IT?',                 e:'Can I try it on?'},
+  {c:'Где ближайший магазин?',      r:'GDYE BLI-ZHÁY-SHI MA-GA-ZÍN?',        e:'Where is the nearest shop?'},
+  {c:'Есть побольше?',              r:'YEST PA-BÓL-SHE?',                     e:'Do you have a bigger size?'},
+  // Transport
+  {c:'Как добраться до центра?',    r:'KAK DAB-RÁT-SA DA TSÉN-TRA?',          e:'How do I get to the centre?'},
+  {c:'Где остановка автобуса?',     r:'GDYE AS-TA-NÓF-KA AV-TÓ-BU-SA?',      e:'Where is the bus stop?'},
+  {c:'Когда следующий поезд?',      r:'KOG-DÁ SLYE-DU-YÚSH-CHI PÓ-YIST?',    e:'When is the next train?'},
+  {c:'Мне нужен билет.',            r:'MNYE NÚ-ZHIN BI-LYÉT.',                e:'I need a ticket.'},
+  {c:'Сколько ехать до вокзала?',   r:'SKÓL-KA YÉ-KHAT DA VAK-ZÁ-LA?',       e:'How long to the station?'},
+  {c:'Поезд опоздал.',              r:'PÓ-YIST A-PAZ-DÁL.',                   e:'The train is late.'},
+  {c:'Мне нужно такси.',            r:'MNYE NÚZH-NA TAK-SÍ.',                 e:'I need a taxi.'},
+  // Work & study
+  {c:'Где вы работаете?',           r:'GDYE VY RA-BÓ-TA-YI-TYE?',            e:'Where do you work?'},
+  {c:'Я работаю в офисе.',          r:'YA RA-BÓ-TA-YU V Ó-FI-SE.',            e:'I work in an office.'},
+  {c:'У меня встреча.',             r:'U MYI-NYÁ VSTRYÉCH-A.',                e:'I have a meeting.'},
+  {c:'Мне нравится моя работа.',    r:'MNYE NRÁ-VI-TSA MA-YÁ RA-BÓ-TA.',      e:'I like my job.'},
+  {c:'Я учусь в университете.',     r:'YA U-CHÚS V U-NI-VYER-SI-TYÉT-YE.',   e:'I study at university.'},
+  {c:'Когда у вас занятие?',        r:'KOG-DÁ U VAS ZA-NYÁ-TI-YE?',           e:'When is your class?'},
+  {c:'У меня экзамен завтра.',      r:'U MYI-NYÁ EK-ZÁ-MYEN ZÁV-TRA.',       e:'I have an exam tomorrow.'},
+  // Communication
+  {c:'Я не говорю по-русски.',      r:'YA NYÉ GA-VA-RYÚ PA-RÚS-SKI.',         e:"I don't speak Russian."},
+  {c:'Говорите медленно.',          r:'GA-VA-RÍ-TYE MYÉD-LYIN-NA.',           e:'Speak slowly.'},
+  {c:'Я не понимаю.',               r:'YA NYÉ PA-NI-MÁ-YU.',                  e:"I don't understand."},
+  {c:'Повторите, пожалуйста.',      r:'PAV-TA-RÍ-TYE PA-ZHÁL-STA.',           e:'Please repeat that.'},
+  {c:'Как это по-русски?',          r:'KAK É-TA PA-RÚS-SKI?',                 e:'How do you say this in Russian?'},
+  {c:'Помогите, пожалуйста.',       r:'PA-MA-GÍ-TYE PA-ZHÁL-STA.',            e:'Help me, please.'},
+  {c:'До свидания!',                r:'DA SVI-DÁ-NI-YA!',                     e:'Goodbye!'},
+  // Opinions & social
+  {c:'Мне это нравится.',           r:'MNYE É-TA NRÁ-VI-TSA.',                e:'I like this.'},
+  {c:'Мне это не нравится.',        r:'MNYE É-TA NYÉ NRÁ-VI-TSA.',            e:'I don\'t like this.'},
+  {c:'Это очень интересно.',        r:'É-TA Ó-CHIN IN-TYI-RYÉS-NA.',          e:'This is very interesting.'},
+  {c:'Я рад это слышать.',          r:'YA RÁT É-TA SLÝSHAT.',                 e:'I\'m glad to hear that.'},
+  {c:'Мне нравится Москва.',        r:'MNYE NRÁ-VI-TSA MASK-VÁ.',             e:'I like Moscow.'},
+  {c:'Я приехал недавно.',          r:'YA PRI-YÉ-KHAL NYI-DÁV-NA.',           e:'I arrived recently. (masc)'},
+  {c:'Вы говорите по-английски?',   r:'VY GA-VA-RÍ-TYE PA-ANG-LÍS-KI?',      e:'Do you speak English?'},
+  // Health & daily
+  {c:'У меня болит голова.',         r:'U MYI-NYÁ BA-LÍT GA-LA-VÁ.',           e:'I have a headache.'},
+  {c:'Мне нужна аптека.',            r:'MNYE NUZH-NÁ AP-TYÉ-KA.',              e:'I need a pharmacy.'},
+  {c:'Как вы себя чувствуете?',      r:'KAK VY SYI-BYÁCHÚST-VU-YI-TYE?',    e:'How are you feeling?'},
+  {c:'Я плохо сплю.',                r:'YA PLÓ-KHA SPLYU.',                    e:'I sleep badly.'},
+  {c:'Мне нужно отдохнуть.',         r:'MNYE NÚZH-NA AT-DAKH-NÚT.',            e:'I need to rest.'},
+  // Descriptions
+  {c:'Этот город очень красивый.',   r:'É-TAT GÓ-RAT Ó-CHIN KRA-SÍ-VY.',       e:'This city is very beautiful.'},
+  {c:'Здесь очень шумно.',           r:'ZDYÉS Ó-CHIN SHÚM-NA.',                e:'It\'s very noisy here.'},
+  {c:'Эта улица длинная.',           r:'É-TA Ú-LI-TSA DLÍ-NA-YA.',             e:'This street is long.'},
+  {c:'Погода сегодня приятная.',     r:'PA-GÓ-DA SI-VÓD-NYA PRI-YÁT-NA-YA.',  e:'The weather today is pleasant.'},
+  {c:'Он очень умный человек.',      r:'ON Ó-CHIN ÚM-NY CHI-LA-VYÉK.',         e:'He is a very clever person.'},
+  // Time & plans
+  {c:'Что вы делаете завтра?',       r:'SHTO VY DYÉ-LA-YI-TYE ZÁV-TRA?',      e:'What are you doing tomorrow?'},
+  {c:'Я занят весь день.',           r:'YA ZÁ-NYAT VYES DYÉN.',                e:'I\'m busy all day.'},
+  {c:'Давайте встретимся завтра.',   r:'DA-VÁY-TYE VSTRYÉT-IM-SYA ZÁV-TRA.',  e:'Let\'s meet tomorrow.'},
+  {c:'В котором часу?',              r:'F KA-TÓ-RAM CHA-SÚ?',                  e:'At what time?'},
+  {c:'В семь вечера.',               r:'F SYÉM VYÉ-CHI-RA.',                   e:'At seven in the evening.'},
+  {c:'Не опаздывайте!',              r:'NYÉ A-PÁZ-DY-VAY-TYE!',               e:'Don\'t be late!'},
+  // More daily life
+  {c:'Я читаю книгу.',               r:'YA CHI-TÁ-YU KNÍ-GU.',                 e:'I\'m reading a book.'},
+  {c:'Мы смотрим фильм.',            r:'MY SMÓT-RIM FÍLM.',                    e:'We\'re watching a film.'},
+  {c:'Он слушает музыку.',           r:'ON SLÚSHA-YIT MÚ-ZY-KU.',             e:'He\'s listening to music.'},
+  {c:'Я хожу в спортзал каждый день.',r:'YA KHA-ZHÚ F SPORT-ZÁL KÁZ-HDY DYÉN.',e:'I go to the gym every day.'},
+  {c:'Это мой любимый ресторан.',    r:'É-TA MÓY LYU-BÍ-MY RYES-TA-RÁN.',     e:'This is my favourite restaurant.'},
+  {c:'У меня много друзей.',         r:'U MYI-NYÁ MNÓ-GA DRU-ZYÉY.',          e:'I have many friends.'},
+  {c:'Давно не виделись!',           r:'DAV-NÓ NYÉ VÍ-DYI-LIS!',              e:'We haven\'t seen each other in a long time!'},
+];
+var PL3=[
+  // Weather advanced
+  {c:'Сегодня ожидается сильный мороз.',     r:'SI-VÓD-NYA A-ZHI-DÁ-YIT-SYA SÍL-NY MA-RÓS.',            e:'A hard frost is expected today.'},
+  {c:'По прогнозу завтра будет дождь.',      r:'PA PRAG-NÓ-ZU ZÁV-TRA BÚ-DIT DÓZHD.',                   e:'According to the forecast it will rain tomorrow.'},
+  {c:'Температура опустилась ниже нуля.',    r:'TIM-PI-RA-TÚ-RA A-PUS-TÍ-LAS NÍ-ZHI NU-LYÁ.',          e:'The temperature dropped below zero.'},
+  {c:'Солнце вышло из-за туч.',              r:'SÓL-NTSE VÝ-SHLO IZ-ZA TÚCH.',                          e:'The sun came out from behind the clouds.'},
+  {c:'Завтра обещают хорошую погоду.',       r:'ZÁV-TRA A-BYE-SHÁ-YUT KHA-RÓ-SHU-YU PA-GÓ-DU.',         e:'They promise good weather tomorrow.'},
+  {c:'Мне не хватает тепла и солнца.',       r:'MNYE NYÉ KHVA-TÁ-YIT TYEP-LÁ I SÓL-NTSA.',              e:'I miss warmth and sunshine.'},
+  {c:'Зима в этом году выдалась суровой.',   r:'ZI-MÁ V É-TAM GA-DÚ VÝ-DA-LAS SU-RÓ-VAY.',              e:'Winter this year turned out harsh.'},
+  {c:'Осень в этом году особенно красивая.', r:'Ó-SYIN V É-TAM GA-DÚ A-SÓ-BIN-NA KRA-SÍ-VA-YA.',        e:'Autumn this year is especially beautiful.'},
+  {c:'После грозы воздух стал свежее.',      r:'PÓS-LYE GRA-ZÝ VÓZ-DUKH STAL SVYE-ZHYÉ-YE.',               e:'After the storm the air became fresher.'},
+  {c:'В городе объявлено штормовое предупреждение.',r:'V GÓ-RA-DYE AB-YAVL-NYÉ-NA SHTAR-MA-VÓ-YE PRI-DUP-RYEZH-DYE-NÍ-YE.',e:'A storm warning has been announced.'},
+  // Family & life
+  {c:'Моя семья живёт в Москве.',            r:'MA-YÁ SIM-YÁ ZHI-VYÓT V MASK-VYÉ.',                     e:'My family lives in Moscow.'},
+  {c:'Расскажите о своей семье.',            r:'RAS-SKA-ZHÍ-TYE A SVA-YÉY SIM-YYÉ.',                    e:'Tell me about your family.'},
+  {c:'Его брат работает переводчиком.',      r:'YE-VÓ BRÁT RA-BÓ-TA-YIT PYI-RYI-VÓD-CHI-KAM.',          e:'His brother works as a translator.'},
+  {c:'Я давно не видел своих родителей.',    r:'YA DAV-NÓ NYÉ VÍ-DIL SVA-ÍKH RA-DÍ-TYI-LYEY.',          e:"I haven't seen my parents in a long time."},
+  {c:'Родители переехали в новый город.',    r:'RA-DÍ-TYI-LI PYI-RYI-YÉ-KHA-LI V NÓ-VY GÓ-RAT.',        e:'My parents moved to a new city.'},
+  {c:'Мы с женой отмечаем годовщину.',       r:'MY S ZHI-NÓY AT-MYI-CHÁ-YIM GA-DAV-SHCHÍ-NU.',          e:'My wife and I are celebrating our anniversary.'},
+  {c:'Дети выросли так быстро.',             r:'DYÉ-TI VÝ-RAS-LI TAK BÝS-TRA.',                         e:'The children grew up so fast.'},
+  {c:'Бабушка готовит очень вкусно.',        r:'BÁ-BUSH-KA GA-TÓ-VIT Ó-CHIN VKÚS-NA.',                  e:'Grandma cooks very well.'},
+  // Work & study
+  {c:'Какая у вас профессия?',               r:'KA-KÁ-YA U VAS PRA-FYÉS-SI-YA?',                        e:'What is your profession?'},
+  {c:'Я работаю в больнице.',                r:'YA RA-BÓ-TA-YU V BAL-NÍ-TSE.',                          e:'I work in a hospital.'},
+  {c:'Она учится в медицинском университете.',r:'A-NÁ Ú-CHI-TSA V MYI-DI-TSÍN-SKAM U-NI-VYER-SI-TYÉT-YE.',e:'She studies at a medical university.'},
+  {c:'Мне нравится изучать русский язык.',   r:'MNYE NRÁ-VI-TSA I-ZU-CHÁT RÚS-SKI YA-ZÝK.',             e:'I enjoy studying Russian.'},
+  {c:'Как долго вы здесь живёте?',           r:'KAK DÓL-GA VY ZDYES ZHI-VYÓT-YE?',                     e:'How long have you been living here?'},
+  {c:'Мы живём в небольшой квартире.',       r:'MY ZHI-VYÓM V NYI-BAL-SHÓY KVAR-TÍ-RYI.',               e:'We live in a small apartment.'},
+  {c:'Я стараюсь каждый день учить слова.',  r:'YA STA-RÁ-YUS KÁZ-HDY DYÉN U-CHÍT SLA-VÁ.',             e:'I try to learn new words every day.'},
+  {c:'На этой неделе много работы.',         r:'NA É-TAY NYI-DYÉL-YE MNÓ-GA RA-BÓ-TY.',                 e:'There is a lot of work this week.'},
+  {c:'Он получил повышение.',                r:'ON PA-LU-CHÍL PA-VY-SHYÉ-NI-YE.',                       e:'He got a promotion.'},
+  {c:'Компания открыла новый офис.',         r:'KAM-PÁ-NI-YA AT-KRÝ-LA NÓ-VY Ó-FIS.',                   e:'The company opened a new office.'},
+  // Travel & city
+  {c:'Как добраться до аэропорта?',          r:'KAK DAB-RÁT-SA DA A-E-RA-PÓR-TA?',                      e:'How do I get to the airport?'},
+  {c:'Забронируйте мне номер в гостинице.',  r:'ZA-BRA-NÍ-RUY-TYE MNYE NÓ-MIR V GAS-TÍ-NI-TSE.',       e:'Book me a hotel room.'},
+  {c:'Где можно обменять валюту?',           r:'GDYE MÓZH-NA AB-MYI-NYÁT VA-LYÚ-TU?',                   e:'Where can I exchange currency?'},
+  {c:'Сколько стоит билет до Петербурга?',   r:'SKÓL-KA STÓ-IT BI-LYÉT DA PYI-TYE-BÚUR-GA?',           e:'How much is a ticket to Petersburg?'},
+  {c:'Поезд отходит с третьего пути.',       r:'PÓ-YIST AT-KHÓ-DIT S TRYE-TYI-VA PU-TÍ.',              e:'The train departs from platform three.'},
+  {c:'Этот район мне нравится.',             r:'É-TAT RA-YÓN MNYE NRÁ-VI-TSA.',                         e:'I like this neighbourhood.'},
+  {c:'В центре города всегда пробки.',       r:'F TSÉN-TRE GÓ-RA-DA VSYIG-DÁ PRÓP-KI.',                 e:'There is always traffic in the city centre.'},
+  // Culture & opinions
+  {c:'Дождливая погода меня угнетает.',      r:'DAZH-DLÍ-VA-YA PA-GÓ-DA MYI-NYÁ UG-NYI-TÁ-YIT.',       e:'Rainy weather depresses me.'},
+  {c:'Красота спасёт мир.',                  r:'KRA-SA-TÁ SPA-SYÓT MÍR.',                               e:'Beauty will save the world.'},
+  {c:'Краткость — сестра таланта.',          r:'KRÁT-KAST SIS-TRÁ TA-LÁN-TA.',                          e:'Brevity is the soul of wit.'},
+  {c:'Русский язык очень интересный.',       r:'RÚS-SKI YA-ZÝK Ó-CHIN IN-TYI-RYÉS-NY.',                e:'Russian is a very interesting language.'},
+  {c:'Мне нравится русская классическая музыка.',r:'MNYE NRÁ-VI-TSA RÚS-KA-YA KLA-SÍ-CHES-KA-YA MÚ-ZY-KA.',e:'I like Russian classical music.'},
+  {c:'Почему вы изучаете русский?',          r:'PA-CHI-MÚ VY I-ZU-CHÁ-YI-TYE RÚS-KI?',                 e:'Why are you learning Russian?'},
+  {c:'Русская кухня очень разнообразна.',    r:'RÚS-KA-YA KÚKH-NYA Ó-CHIN RAZ-NA-AB-RÁZ-NA.',           e:'Russian cuisine is very diverse.'},
+  {c:'Я интересуюсь историей России.',       r:'YA IN-TYI-RYI-SÚ-YUS IS-TÓ-RI-YEY RAS-SÍ-I.',          e:'I\'m interested in Russian history.'},
+  {c:'В России много красивых мест.',        r:'V RAS-SÍ-I MNÓ-GA KRA-SÍ-VYKH MYÉS.',                  e:'Russia has many beautiful places.'},
+  // Complex sentences
+  {c:'Несмотря на усталость, он продолжил работу.',r:'NYI-SMAT-RYÁH NA US-TÁ-LAST ON PRA-DÓL-ZHYL RA-BÓ-TU.',e:'Despite being tired, he continued working.'},
+  {c:'Если хочешь мира — готовься к войне.',  r:'YÉS-LI KHÓ-CHISH MÍ-RA GA-TÓF-SYA K VAY-NYÉ.',         e:'If you want peace, prepare for war.'},
+  {c:'Чем больше знаешь, тем лучше.',        r:'CHEM BÓL-SHE ZNA-YÍSH TYEM LÚ-CHSHE.',                 e:'The more you know, the better.'},
+  {c:'Не всё то золото, что блестит.',        r:'NYÉ VSYO TO ZÓ-LA-TA SHTO BLIS-TÍT.',                  e:'All that glitters is not gold.'},
+  {c:'Лучше поздно, чем никогда.',           r:'LÚ-CHSHE PÓZD-NA CHEM NYI-KOG-DÁ.',                    e:'Better late than never.'},
+  {c:'Слово не воробей, вылетит — не поймаешь.',r:'SLÓ-VA NYÉ VA-RA-BYÉY VÝ-LYI-TIT NYÉ PAY-MÁ-YISH.',e:'A word isn\'t a sparrow — once it flies out, you can\'t catch it.'},
+  {c:'Работа не волк, в лес не убежит.',     r:'RA-BÓ-TA NYÉ VÓLK F LYÉS NYÉ U-BYI-ZHÝT.',             e:'Work isn\'t a wolf — it won\'t run into the woods. (no rush)'},
+  // Health & formal
+  {c:'Вам необходима операция.',             r:'VAM NYI-AB-KHA-DÍ-MA A-PI-RÁ-TSI-YA.',                  e:'You need surgery.'},
+  {c:'Принимайте это лекарство три раза в день.',r:'PRI-NI-MÁY-TYE É-TA LYI-KÁR-STVA TRI RÁ-ZA V DYÉN.',e:'Take this medicine three times a day.'},
+  {c:'У меня аллергия на пенициллин.',       r:'U MYI-NYÁ A-LYÉR-GI-YA NA PYI-NI-TSIL-LÍN.',           e:'I\'m allergic to penicillin.'},
+  // News-style
+  {c:'Правительство объявило о новых мерах.', r:'PRA-VÍ-TYIL-STVA AB-YAV-LÍ-LA A NÓ-VYKH MYÉR-RAKH.',    e:'The government announced new measures.'},
+  {c:'Переговоры прошли в конструктивном ключе.',r:'PYI-RYI-GA-VÓ-RY PRASH-LÍ F KANS-TRUK-TÍV-NAM KLYU-CHÉ.',e:'Negotiations took place in a constructive manner.'},
+  {c:'Экономика показала признаки восстановления.',r:'E-KA-NÓ-MI-KA PA-KA-ZÁ-LA PRIZ-NÁ-KI VAS-STA-NAV-LYÉN-NI-YA.',e:'The economy showed signs of recovery.'},
+  // Proverbs & wisdom
+  {c:'Без труда не вынешь рыбку из пруда.',  r:'BYES TRU-DÁ NYÉ VÝ-NYISH RÝP-KU IS PRU-DÁ.',            e:'Without effort you can\'t pull a fish from a pond. (no pain no gain)'},
+  {c:'В гостях хорошо, а дома лучше.',       r:'V GAS-TYÁKH KHA-RA-SHÓ A DÓ-MA LÚ-CHSHE.',              e:'It\'s nice to visit but home is better.'},
+  {c:'Не имей сто рублей, а имей сто друзей.',r:'NYÉ I-MYÉY STO RUB-LYÉY A I-MYÉY STO DRU-ZYÉY.',      e:'Don\'t have a hundred roubles, have a hundred friends.'},
+  // Advanced opinions & complex
+  {c:'Трудно переоценить важность этого решения.',r:'TRÚD-NA PYI-RYI-A-TSI-NÍT VÁZH-NAST É-TA-VA RYI-SHYÉ-NI-YA.',e:'It\'s hard to overestimate the importance of this decision.'},
+  {c:'Мне трудно понимать на слух.',         r:'MNYE TRÚD-NA PA-NI-MÁT NA SLÚKH.',                      e:'It\'s hard for me to understand by ear.'},
+  {c:'Привычка читать книги очень полезна.', r:'PRI-VÝ-CHKA CHI-TÁT KNÍ-GI Ó-CHIN PA-LYÉZ-NA.',         e:'The habit of reading books is very useful.'},
+  {c:'Что вы посоветуете посмотреть здесь?', r:'SHTO VY PA-SA-VYÉ-TU-YI-TYE PAS-MAT-RYÉT ZDYÉS?',      e:'What would you recommend seeing here?'},
+  {c:'Он выразил несогласие с этим мнением.',r:'ON VÝ-RA-ZIL NYI-SAG-LÁ-SI-YE S É-TIM MNYÉ-NI-YIM.',   e:'He expressed disagreement with this opinion.'},
+  {c:'Ситуация требует немедленного вмешательства.',r:'SI-TU-Á-TSI-YA TRÝE-BU-YIT NYI-MYÉD-LIN-NA-VA VMYI-SHÁT-YELS-TVA.',e:'The situation requires immediate intervention.'},
+  {c:'Следует учитывать все возможные риски.',r:'SLÝE-DU-YIT U-CHÍ-TY-VAT VSYE VAZ-MÓZH-NY-YE RÍS-KI.',e:'One must consider all possible risks.'},
+  {c:'Несмотря на трудности, мы справились.',r:'NYI-SMAT-RYÁH NA TRÚD-NAS-TI MY SPRÁ-VI-LIS.',           e:'Despite the difficulties, we managed.'},
+  {c:'Это требует дополнительного изучения.', r:'É-TA TRÝE-BU-YIT DA-PAL-NÍ-TYIL-NA-VA I-ZU-CHYÉN-NI-YA.',e:'This requires further study.'},
+  // Social & etiquette
+  {c:'Разрешите представиться.',             r:'RAZ-RYI-SHÍT-YE PRIS-TÁ-VI-TSA.',                       e:'Allow me to introduce myself.'},
+  {c:'Позвольте задать вопрос.',             r:'PAZ-VÓL-TYE ZA-DÁT VA-PRÓS.',                            e:'Allow me to ask a question.'},
+  {c:'Я хотел бы узнать подробнее.',         r:'YA KHA-TYÉL BY UZ-NÁT PA-DRÓBN-YE-YE.',                   e:'I would like to find out in more detail.'},
+  {c:'Могу ли я чем-нибудь помочь?',         r:'MA-GÚ LI YA CHEM NYI-BÚD PA-MÓCH?',                   e:'Is there anything I can help with?'},
+  {c:'Спасибо за гостеприимство.',           r:'SPA-SÍ-BA ZA GAS-TYI-PRI-ÍMS-TVA.',                     e:'Thank you for your hospitality.'},
+  {c:'Передайте привет вашей семье.',        r:'PYI-RYI-DÁY-TYE PRI-VYÉT VÁ-SHEY SIM-YYÉ.',             e:'Give my regards to your family.'},
+  // Arts & culture
+  {c:'Большой театр — символ России.',       r:'BAL-SHÓY TYI-ÁTR SÍM-VAL RAS-SÍ-I.',                    e:'The Bolshoi Theatre is a symbol of Russia.'},
+  {c:'Русская литература богата шедеврами.', r:'RÚS-KA-YA LI-TYI-RA-TÚ-RA BA-GÁ-TA SHI-DEVR-Á-MI.',   e:'Russian literature is rich in masterpieces.'},
+  {c:'Достоевский исследовал глубины человеческой души.',r:'DAS-TA-YÉEV-SKI IS-SLYE-DA-VAL GLU-BÍ-NY CHI-LA-VYÉCH-ES-KAY DÚ-SHI.',e:'Dostoevsky explored the depths of the human soul.'},
+  {c:'Чайковский написал Лебединое озеро.',  r:'CHAY-KÓF-SKI NA-PI-SÁL LYI-BYI-DÍ-NA-YE Ó-ZYI-RA.',   e:'Tchaikovsky wrote Swan Lake.'},
+  // Advanced travel
+  {c:'Виза оформляется в течение десяти дней.',r:'VÍ-ZA A-FARM-LYÁ-YIT-SYA F TYI-CHYÉ-NI-YE DYI-SYA-TÍ DNYÉY.',e:'The visa is processed within ten days.'},
+  {c:'Таможенный контроль прошёл быстро.',   r:'TA-MÓ-ZHIN-NY KAN-TRÓL PRA-SHYÓL BÝS-TRA.',             e:'Customs control went quickly.'},
+  {c:'Я потерял паспорт.',                   r:'YA PA-TYI-RYÁL PÁS-PART.',                               e:'I\'ve lost my passport.'},
+  {c:'Как позвонить в скорую помощь?',       r:'KAK PAZ-VA-NÍT F SKÓ-RU-YU PÓ-MASH?',                  e:'How do I call an ambulance?'},
+  // Nature & environment
+  {c:'Волга — самая длинная река в Европе.',  r:'VÓL-GA SÁ-MA-YA DLÍ-NA-YA RYI-KÁ V YEV-RÓ-PYE.',       e:'The Volga is the longest river in Europe.'},
+  {c:'Байкал содержит пятую часть мировых запасов воды.',r:'BAY-KÁL SA-DYÉR-ZHIT PYÁ-TU-YU CHÁST MI-RA-VÝKH ZA-PÁ-SAF VA-DÝ.',e:'Baikal contains a fifth of the world\'s freshwater.'},
+  {c:'Леса занимают большую часть территории.',r:'LYI-SÁ ZA-NI-MÁ-YUT BAL-SHÚ-YU CHÁST TYI-RI-TÓ-RI-I.',e:'Forests cover a large part of the territory.'},
+  // Science & technology
+  {c:'Искусственный интеллект меняет мир.',   r:'IS-KÚS-TVYIN-NY IN-TYI-LYÉKT MYI-NYÁ-YIT MÍR.',          e:'Artificial intelligence is changing the world.'},
+  {c:'Учёные разработали новую вакцину.',     r:'U-CHYÓ-NY-YE RAZ-RA-BÓ-TA-LI NÓ-VU-YU VAK-TSÍ-NU.',     e:'Scientists developed a new vaccine.'},
+  // Reflections & philosophy
+  {c:'Счастье не в деньгах, а в их количестве.',r:'SCHÁS-TYE NYÉ V DYEN-GAKH A V IKH KA-LÍ-CHEST-VYE.', e:'Happiness is not in money, but in the amount of it. (ironic)'},
+  {c:'Человек кузнец своего счастья.',        r:'CHI-LA-VYÉK KUZ-NYÉTS SVA-YE-VÓ SCHÁS-TYA.',            e:'Man is the blacksmith of his own happiness.'},
+  {c:'Жизнь прожить — не поле перейти.',      r:'ZHÝZN PRA-ZHÝT NYÉ PÓ-LYE PYI-RYI-TÍ.',                e:'Living life is not like crossing a field. (life is hard)'},
+  {c:'Всё течёт, всё изменяется.',            r:'VSYO TI-CHYÓT VSYO IZ-MYI-NYÁA-YIT-SYA.',                e:'Everything flows, everything changes. (Heraclitus)'},
+  // Formal situations
+  {c:'Прошу прощения за опоздание.',          r:'PRA-SHU PRA-SHCHI-NI-YA ZA A-PAZ-DA-NI-YE.',           e:'I apologize for being late.'},
+  {c:'Позвольте выразить свою благодарность.', r:'PAZ-VÓL-TYE VÝ-RA-ZIT SVA-YÚ BLA-GA-DÁR-NAST.',        e:'Allow me to express my gratitude.'},
+  {c:'Рады приветствовать вас в нашем городе.',r:'RÁ-DY PRI-VYÉT-STVA-VAT VAS V NÁ-SHEM GÓ-RA-DYE.',     e:'We are glad to welcome you to our city.'},
+  {c:'Подведём итоги нашей встречи.',         r:'PAD-VYI-DYÓM I-TÓ-GI NÁ-SHEY VSTRYÉY-CHI.',             e:'Let\'s sum up the results of our meeting.'},
+  {c:'Предлагаю перейти к следующему вопросу.',r:'PRID-LA-GÁ-YU PYI-RYI-TÍ K SLÝE-DU-YU-SHCHE-MU VA-PRÓL-SU.',e:'I suggest moving to the next question.'},
+  {c:'Это требует более детального рассмотрения.',r:'É-TA TRÝE-BU-YIT BÓ-LYE-YE DYI-TÁL-NA-VA RAS-SMAT-RYÉN-NI-YA.',e:'This requires a more detailed examination.'},
+  {c:'Согласен с вашей точкой зрения.',       r:'SAG-LÁ-SYEN S VÁ-SHEY TÓCH-KAY ZRYÉN-NI-YA.',           e:'I agree with your point of view.'},
+  {c:'Кто ищет — тот всегда найдёт.',r:'KTO ÍSH-CHET — TOT VSYEG-DÁ NAY-DYÓT.',e:'He who seeks will always find.'},
+];
+
+// ── HARD SENTENCE POOL (for Run modes) ───────────────────────────────────────
+// ── TRANSLATION INLINE BOX ────────────────────────────────────────────────────
+function transBox(text){
+  if(!text) return '';
+  return '<div class="trans-box"><div class="trans-box-label">Translation<\/div><div class="trans-box-text">'+text+'<\/div><\/div>';
+}
+
+var HARD_SENTENCES = [
+  // Пушкин — Евгений Онегин
+  {c:'Мой дядя самых честных правил, когда не в шутку занемог.',r:'MÓY DYÁ-DYA SÁ-MYKH CHÉST-NYKH PRÁ-VIL, KOG-DÁ NYÉ V SHÚT-KU ZA-NYI-MÓG.',e:'My uncle — a man of the most honourable principles — when he fell seriously ill.',src:'Пушкин — Евгений Онегин'},
+  {c:'Он уважать себя заставил и лучше выдумать не мог.',r:'ON U-VA-ZHÁT SYI-BYÁA ZAS-TÁ-VIL I LÚ-CHSHE VÝ-DU-MAT NYÉ MÓG.',e:'He forced others to respect him, and could not have devised a better scheme.',src:'Пушкин — Евгений Онегин'},
+  {c:'Его пример другим наука; но, боже мой, какая скука.',r:'YI-VÓ PRI-MYÉR DRU-GÍM NA-ÚKA; NO BÓ-ZHE MOY, KA-KÁ-YA SKÚ-KA.',e:'His example is a lesson to others; but, good heavens, what a bore.',src:'Пушкин — Евгений Онегин'},
+  {c:'Татьяна, русская душою, сама не зная почему.',r:'TAT-YÁ-NA RÚS-KA-YA DU-SHÓY-U, SA-MÁ NYÉ ZNÁ-YA PA-CHI-MÚ.',e:'Tatyana — Russian in her soul — without knowing why herself.',src:'Пушкин — Евгений Онегин'},
+  {c:'Я вас любил: любовь ещё, быть может, в душе моей угасла не совсем.',r:'YA VAS LYU-BÍL: LYU-BÓF YI-SHCHÓ BÝT MÓ-ZHET V DU-SHYÉ MA-YÉY U-GÁS-LA NYÉ SAF-SYÉM.',e:'I loved you: love, perhaps, has not entirely faded from my soul.',src:'Пушкин'},
+  {c:'Но пусть она вас больше не тревожит; я не хочу печалить вас ничем.',r:'NO PUST A-NÁ VAS BÓL-SHE NYÉ TRYE-VÓ-ZHIT; YA NYÉ KHA-CHÚ PYI-CHÁL-IT VAS NYI-CHYÉM.',e:'But let it trouble you no more; I do not wish to sadden you with anything.',src:'Пушкин'},
+  // Толстой — Война и мир
+  {c:'Всё смешалось в доме Облонских.',r:'VSYO SME-SHÁL-AS V DÓ-MYE AB-LÓN-SKIKH.',e:'Everything was in confusion in the Oblonsky household.',src:'Толстой — Анна Каренина'},
+  {c:'Все счастливые семьи похожи друг на друга, каждая несчастливая семья несчастлива по-своему.',r:'VSYE SCHAST-LÍ-VY-YE SIM-YÍ PA-KHÓ-ZHI DRÚG NA DRÚ-GA, KÁZ-DYA-YA NYE-SCHAST-LÍ-VA-YA SIM-YÁ NYE-SCHAST-LÍ-VA PA-SVA-YÉ-MU.',e:'All happy families are alike; each unhappy family is unhappy in its own way.',src:'Толстой — Анна Каренина'},
+  {c:'Война есть противное человеческому разуму и всей человеческой природе событие.',r:'VAY-NÁ YEST PRA-TÍV-NA-YE CHE-LA-VYÉCH-ES-KA-MU RÁ-ZU-MU I VSÉY CHE-LA-VYÉCH-ES-KAY PRI-RÓ-DYE SA-BY-TI-YE.',e:'War is an event contrary to human reason and all human nature.',src:'Толстой — Война и мир'},
+  {c:'Нет величия там, где нет простоты, добра и правды.',r:'NYÉT VYI-LÍ-CHI-YA TAM GDYE NYÉT PRAS-TA-TÝ, DAB-RÁ I PRÁV-DY.',e:'There is no greatness where there is no simplicity, goodness and truth.',src:'Толстой — Война и мир'},
+  {c:'Сила правительства держится на невежестве народа, и оно знает это.',r:'SÍ-LA PRA-VÍ-TYIL-STVA DYÉR-ZHIT-SYA NA NYI-VYÉZ-HEST-VYE NA-RÓ-DA I A-NÓ ZNÁ-YIT É-TA.',e:'The power of government rests on the ignorance of the people, and it knows this.',src:'Толстой'},
+  // Достоевский
+  {c:'Красота спасёт мир.',r:'KRA-SA-TÁ SPA-SYÓT MÍR.',e:'Beauty will save the world.',src:'Достоевский — Идиот'},
+  {c:'Человек есть тайна. Её надо разгадать.',r:'CHE-LA-VYÉK YEST TÁY-NA. YEY NÁ-DA RAZ-GA-DÁT.',e:'Man is a mystery. It needs to be solved.',src:'Достоевский'},
+  {c:'Надо любить жизнь больше, чем смысл её.',r:'NÁ-DA LYU-BÍT ZHÝZN BÓL-SHE CHEM SMÝSL YE-YÓ.',e:'One must love life more than the meaning of it.',src:'Достоевский — Братья Карамазовы'},
+  {c:'Страдание и боль всегда обязательны для широкого сознания и глубокого сердца.',r:'STRA-DÁ-NI-YE I BÓL FSYIG-DÁ A-BYA-ZÁ-TYIL-NY DLA SHI-RÓ-KA-VA SAZ-NÁ-NI-YA I GLU-BÓ-KA-VA SYÉR-TSA.',e:'Suffering and pain are always obligatory for a broad consciousness and a deep heart.',src:'Достоевский — Преступление и наказание'},
+  {c:'В страдании есть идея — это знал уже Достоевский.',r:'V STRA-DÁ-NI-I YEST I-DYÉ-YA — É-TA ZNAL U-ZHÉ DAS-TA-YÉEV-SKI.',e:'There is an idea in suffering — Dostoevsky already knew this.',src:'Достоевский'},
+  {c:'Полюбите нас чёрненькими, а беленькими нас всякий полюбит.',r:'PA-LYU-BÍ-TYE NAS CHYÓR-NYEN-KI-MI A BYÉL-YEN-KI-MI NAS VSYÁ-KI PA-LYU-BIT.',e:'Love us when we are dark and miserable — anyone will love us when we are bright and happy.',src:'Достоевский'},
+  // Чехов
+  {c:'В человеке должно быть всё прекрасно: и лицо, и одежда, и душа, и мысли.',r:'V CHE-LA-VYÉK-YE DAZH-NÓ BÝT VSYO PREK-RÁS-NA: I LI-TSÓ I A-DYÉZH-DA I DU-SHÁ I MÝS-LI.',e:'Everything in a person should be beautiful: face, clothes, soul and thoughts.',src:'Чехов — Дядя Ваня'},
+  {c:'Если боишься одиночества, не женись.',r:'YÉS-LI BA-ÍSH-SYA A-DI-NÓ-CHEST-VA NYÉ ZHY-NÍS.',e:'If you fear loneliness, don\'t get married.',src:'Чехов'},
+  {c:'Краткость — сестра таланта.',r:'KRÁT-KAST SIS-TRÁ TA-LÁN-TA.',e:'Brevity is the sister of talent.',src:'Чехов'},
+  {c:'Университет развивает все способности, в том числе — глупость.',r:'U-NI-VYER-SI-TYÉT RAZ-VÍ-VA-YIT VSYE SPA-SÓB-NAS-TI, V TOM CHÍS-LYE — GLÚ-PAST.',e:'A university develops all abilities, including stupidity.',src:'Чехов'},
+  {c:'Когда человеку хорошо, ему некогда думать, что ему плохо.',r:'KOG-DÁ CHE-LA-VYÉK-U KHA-RA-SHÓ, YI-MÚ NYÉK-OG-DA DÚ-MAT SHTO YI-MÚ PLÓ-KHA.',e:'When a person is feeling good, he has no time to think that he is feeling bad.',src:'Чехов'},
+  // Булгаков — Мастер и Маргарита
+  {c:'Рукописи не горят.',r:'RU-KA-PÍ-SI NYÉ GA-RYÁT.',e:'Manuscripts don\'t burn.',src:'Булгаков — Мастер и Маргарита'},
+  {c:'Трусость — самый страшный порок.',r:'TRÚ-SAST — SÁ-MY STRÁSH-NY PA-RÓK.',e:'Cowardice is the most terrible vice.',src:'Булгаков — Мастер и Маргарита'},
+  {c:'Никогда и ничего не просите! Никогда и ничего — и в особенности у тех, кто сильнее вас.',r:'NYI-KAG-DÁ I NYI-CHI-VÓ NYÉ PRA-SÍ-TYE! NYI-KAG-DÁ I NYI-CHI-VÓ — I V A-SÓ-BEN-NAS-TI U TYEKH KTO SIL-NYÉE VAS.',e:'Never ask for anything! Never and nothing — especially from those who are stronger than you.',src:'Булгаков — Мастер и Маргарита'},
+  {c:'Он был жестоко наказан за свою трусость.',r:'ON BYL ZHES-TÓ-KA NA-KÁ-ZAN ZA SVO-YÚ TRÚ-SAST.',e:'He was cruelly punished for his cowardice.',src:'Булгаков — Мастер и Маргарита'},
+  // Лермонтов
+  {c:'Нет, я не Байрон, я другой, ещё неведомый избранник.',r:'NYÉT YA NYÉ BÁY-RON YA DRU-GÓY, YI-SHCHÓ NYI-VYÉD-A-MY IZ-BRÁN-NIK.',e:'No, I am not Byron — I am another, still unknown chosen one.',src:'Лермонтов'},
+  {c:'Я жить хочу! Хочу печали, любви и счастью вопреки.',r:'YA ZHÝT KHA-CHÚ! KHA-CHÚ PYI-CHA-LI, LYU-BVÍ I SCHÁST-YU VAP-RYI-KÍ.',e:'I want to live! I want sorrow, contrary to love and happiness.',src:'Лермонтов'},
+  {c:'Печально я гляжу на наше поколенье!',r:'PYI-CHÁЛ-NA YA GLYÁ-ZHU NA NÁ-SHE PA-KA-LYÉN-YE!',e:'Sadly I look upon our generation!',src:'Лермонтов'},
+  // Тургенев
+  {c:'Россия без каждого из нас обойтись может, но никто из нас без неё не может обойтись.',r:'RAS-SÍ-YA BYES KÁZ-DA-VA IZ NAS AB-AY-TÍS MÓ-ZHET NO NYI-KTO IZ NAS BYES NYE-YÓ NYÉ MÓ-ZHET AB-AY-TÍS.',e:'Russia can get along without each of us, but none of us can get along without Russia.',src:'Тургенев'},
+  {c:'Хочешь быть счастливым? Выучись сначала терпеть несчастье.',r:'KHÓ-CHESH BÝT SCHAST-LÍ-VYM? VÝ-U-CHIS SNA-CHA-LA TYIR-PYÉT NYE-SCHÁST-YE.',e:'Do you want to be happy? First learn to endure unhappiness.',src:'Тургенев'},
+  // Гоголь
+  {c:'Русь! Русь! Вижу тебя, из моего чудного, прекрасного далека тебя вижу.',r:'RUS! RUS! VÍ-ZHU TYI-BYÁA IZ MA-YI-VÓ CHUD-NÓ-VA PREK-RÁS-NA-VA DA-LYI-KÁ TYI-BYÁA VÍ-ZHU.',e:'Rus! Rus! I see you, from my wondrous, beautiful distance I see you.',src:'Гоголь — Мёртвые души'},
+  {c:'Скучно на этом свете, господа!',r:'SKÚCH-NA NA É-TAM SVYE-TYE, GAS-PA-DÁ!',e:'It is dull in this world, ladies and gentlemen!',src:'Гоголь'},
+  {c:'Знаете ли вы украинскую ночь? О, вы не знаете украинской ночи!',r:'ZNÁ-YI-TYE LI VY UK-RA-ÍN-SKU-YU NÓCH? O, VY NYÉ ZNÁ-YI-TYE UK-RA-ÍN-SKAY NÓ-CHI!',e:'Do you know a Ukrainian night? Oh, you do not know a Ukrainian night!',src:'Гоголь'},
+  // Набоков
+  {c:'Лолита, свет моей жизни, огонь моих чресел.',r:'LA-LÍ-TA, SVYET MA-YÉY ZHÝZ-NI, A-GÓN MA-ÍKH CHRYÉ-SYI-LI.',e:'Lolita, light of my life, fire of my loins.',src:'Набоков — Лолита'},
+  {c:'Память — это единственная кладовая, из которой никто не может нас обокрасть.',r:'PÁ-MYAT — É-TA YI-DÍN-STVIN-NA-YA KLA-DA-VÁ-YA IZ KA-TÓ-RAY NYI-KTO NYÉ MÓ-ZHIT NAS A-BA-KRÁSD.',e:'Memory is the only storehouse from which no one can rob us.',src:'Набоков'},
+  // Пастернак
+  {c:'Февраль. Достать чернил и плакать!',r:'FYIV-RÁLY. DAS-TÁT CHIR-NÍL I PLÁ-KAT!',e:'February. To get ink and weep!',src:'Пастернак'},
+  {c:'Во всём мне хочется дойти до самой сути.',r:'VA FSYÓM MNYE KHÓ-CHIT-SYA DAY-TÍ DA SÁ-MAY SÚ-TI.',e:'In everything I want to reach the very essence.',src:'Пастернак'},
+  // Ахматова
+  {c:'Я научила женщин говорить, но как их замолчать заставить?',r:'YA NA-U-CHÍ-LA ZHÉN-SHCHIN GA-VA-RÍT, NO KAK IKH ZA-MAL-CHÁТ ZAS-TÁ-VIT?',e:'I taught women to speak, but how to make them fall silent?',src:'Ахматова'},
+  {c:'Мне голос был. Он звал утешно.',r:'MNYE GÓ-LAS BYL. ON ZVAL U-TYÉSH-NA.',e:'A voice came to me. It called consolingly.',src:'Ахматова'},
+  // Блок
+  {c:'Ночь, улица, фонарь, аптека, бессмысленный и тусклый свет.',r:'NÓCH, Ú-LI-TSA, FA-NÁR, AP-TYÉ-KA, BYIS-MÝSL-YIN-NY I TÚS-KLY SVYET.',e:'Night, street, lamp, pharmacy — a senseless and dim light.',src:'Блок'},
+  {c:'О, весна без конца и без краю — без конца и без краю мечта!',r:'O VYES-NÁ BYES KON-TSÁ I BYES KRÁ-YU — BYES KON-TSÁ I BYES KRÁ-YU MYECH-TÁ!',e:'Oh, spring without end and without limit — without end and without limit the dream!',src:'Блок'},
+  // Маяковский
+  {c:'Послушайте! Ведь, если звёзды зажигают — значит — это кому-нибудь нужно?',r:'PAS-LÚ-SHAY-TYE! VYED YÉSLI ZVYOZ-DY ZA-ZHI-GÁ-YUT — ZNÁCH-IT — É-TA KA-MÚ-NYI-BUD NÚZH-NA?',e:'Listen! If the stars are lit — it means — someone needs them?',src:'Маяковский'},
+  {c:'Я хочу, чтоб к штыку приравняли перо.',r:'YA KHA-CHÚ, SHTOB K SHTÝ-KU PRI-RAV-NYÁ-LI PYI-RÓ.',e:'I want the pen to be equated with the bayonet.',src:'Маяковский'},
+  // Есенин
+  {c:'Не жалею, не зову, не плачу, всё пройдёт, как с белых яблонь дым.',r:'NYÉ ZHA-LYÉY-U, NYÉ ZA-VÚ, NYÉ PLÁ-CHU, VSYO PRAY-DYÓT KAK S BYÉLYKH ÁB-LAN DÝM.',e:'I do not regret, do not call, do not weep — all will pass like smoke from white apple trees.',src:'Есенин'},
+  {c:'Дай, Джим, на счастье лапу мне.',r:'DAY, DZHIM, NA SCHÁST-YE LÁ-PU MNYE.',e:'Give me your paw for luck, Jim.',src:'Есенин'},
+  {c:'Природа не храм, а мастерская, и человек в ней работник.',r:'PRI-RÓ-DA NYÉT KHRAM A MAS-TYR-SKÁ-YA, I CHE-LA-VYÉK V NYEY RA-BÓT-NIK.',e:'Nature is not a temple, but a workshop, and man is a worker in it.',src:'Тургенев — Отцы и дети'},
+  {c:'Во дни сомнений, во дни тягостных раздумий о судьбах моей родины — ты один мне поддержка и опора.',r:'VA DNI SAM-NYÉN-I, VA DNI TYÁH-GAST-NYKH RAZ-DÚ-MI A SUD-BÁK HA-YEY RA-DÍ-NY — TY A-DÍN MNYE PÁD-DYERZH-KA I A-PÓ-RA.',e:'In days of doubt, in days of painful brooding — you alone are my support and stay.',src:'Тургенев — Русский язык'},
+  {c:'Берегите наш язык, наш прекрасный русский язык.',r:'BYE-RYE-GÍ-TYE NASH YA-ZÝK, NASH PREK-RÁS-NY RÚS-SKI YA-ZÝK.',e:'Cherish our language, our beautiful Russian language.',src:'Тургенев'},
+  {c:'Хочешь быть счастливым? Выучись сначала терпеть несчастье.',r:'KHÓ-CHESH BÝT SCHAST-LÍ-VYM? VÝ-U-CHIS SNA-CHA-LA TYIR-PYÉT NYE-SCHÁST-YE.',e:'Do you want to be happy? First learn to endure unhappiness.',src:'Тургенев'},
+  {c:'Чуден Днепр при тихой погоде.',r:'CHÚD-EN DNYEPR PRI TÍ-KHAY PA-GÓ-DYE.',e:'Wondrous is the Dnieper in quiet weather.',src:'Гоголь — Тарас Бульба'},
+  {c:'Нет уз святее товарищества.',r:'NYÉT UZ SVA-TYÉY-YE TA-VÁ-RISH-CHES-TVA.',e:'There are no bonds more sacred than comradeship.',src:'Гоголь — Тарас Бульба'},
+  {c:'Скучно на этом свете, господа!',r:'SKÚCH-NA NA É-TAM SVYE-TYE, GAS-PA-DÁ!',e:'It is dull in this world, ladies and gentlemen!',src:'Гоголь'},
+  {c:'Знаете ли вы украинскую ночь? О, вы не знаете украинской ночи!',r:'ZNÁ-YI-TYE LI VY UK-RA-ÍN-SKU-YU NÓCH? O, VY NYÉ ZNÁ-YI-TYE UK-RA-ÍN-SKAY NÓ-CHI!',e:'Do you know a Ukrainian night? Oh, you do not know a Ukrainian night!',src:'Гоголь'},
+  {c:'Быть знаменитым некрасиво.',r:'BYT ZNA-MYE-NÍ-TYM NYE-KRA-SÍ-VA.',e:'To be famous is not seemly.',src:'Пастернак'},
+  {c:'Цель творчества — самоотдача, а не шумиха, не успех.',r:'TSYEL TVÓR-CHES-TVA — SA-MA-AT-DÁ-CHA, A NYÉ SHU-MÍ-KHA, NYÉ US-PYÉKH.',e:'The goal of creativity is self-giving, not noise, not success.',src:'Пастернак'},
+  {c:'Жить — это не поле перейти.',r:'ZHIT — É-TA NYÉ PÓ-LYE PYE-RYE-TÍ.',e:'To live is not like crossing a field.',src:'Пастернак — Доктор Живаго'},
+  {c:'Я была тогда с моим народом там, где мой народ, к несчастью, был.',r:'YA BY-LÁ TAG-DÁ S MA-ÍM NA-RÓ-DAM TAM GDYE MOY NA-RÓT K NYE-SCHÁST-YU BYL.',e:'I was then with my people there, where my people, to their misfortune, were.',src:'Ахматова — Реквием'},
+  {c:'Светить всегда, светить везде, до дней последних донца.',r:'SVYE-TÍT FSYEG-DÁ, SVYE-TÍT VYEZ-DYÉ, DA DNYÉY PAS-LYÉD-NIKH DÁN-TSA.',e:'To shine always, to shine everywhere, to the very last days.',src:'Маяковский'},
+  {c:'Я последний поэт деревни.',r:'YA PAS-LYÉD-NY PA-ÉT DYE-RYÉV-NYI.',e:'I am the last poet of the village.',src:'Есенин'},
+  {c:'Отговорила роща золотая берёзовым весёлым языком.',r:'AT-GA-VA-RÍ-LA RÓ-SHCHA ZA-LA-TÁ-YA BYE-RYÓZ-A-VYM VYE-SYÓ-LYM YA-ZY-KÓM.',e:'The golden grove has spoken its last in the merry tongue of birch trees.',src:'Есенин'},
+  {c:'Жизнь коротка, искусство долговечно.',r:'ZHYZN KA-RÓT-KA, IS-KÚS-TVA DAL-GA-VYÉCH-NA.',e:'Life is short, art is long.',src:'Набоков'},
+  {c:'Мир движется вперёд благодаря тем, кто страдает.',r:'MIR DVÍ-ZHE-TSA VPYE-RYÓD BLA-GA-DA-RYÁ TYEM KTO STRA-DÁ-YET.',e:'The world advances thanks to those who suffer.',src:'Толстой'},
+  {c:'Если в жизни нет смысла, надо его создать.',r:'YES-LI V ZHYZ-NYI NYÉT SMÝS-LA NÁ-DA YE-VÓ SAZ-DÁT.',e:'If life has no meaning, one must create it.',src:'Толстой'},
+  {c:'Все великие истины начинались как богохульства.',r:'VSYE VYE-LÍ-KI-YE IS-TÍ-NY NA-CHI-NÁ-LIS KAK BA-GA-KHÚL-STVA.',e:'All great truths begin as blasphemies.',src:'Толстой'},
+  {c:'Самое трудное — это начать.',r:'SA-MA-YE TRÚD-NA-YE — É-TA NA-CHÁT.',e:'The hardest thing is to begin.',src:'Чехов'},
+  {c:'Медицина — моя законная жена, а литература — любовница.',r:'MYE-DI-TSÍ-NA — MA-YÁ ZA-KÓN-NA-YA ZHI-NÁ, A LI-TYE-RA-TÚ-RA — LYU-BÓV-NI-TSA.',e:'Medicine is my lawful wife and literature is my mistress.',src:'Чехов'},
+  {c:'Университет развивает все способности, в том числе — глупость.',r:'U-NI-VYER-SI-TYÉT RAZ-VÍ-VA-YIT VSYE SPA-SÓB-NAS-TI, V TOM CHÍS-LYE — GLÚ-PAST.',e:'A university develops all abilities, including stupidity.',src:'Чехов'},
+  {c:'Если Бога нет, всё позволено.',r:'YES-LI BÓ-GA NYÉT VSYO PAZ-VÓ-LYE-NA.',e:'If God does not exist, everything is permitted.',src:'Достоевский — Братья Карамазовы'},
+  {c:'Любите жизнь раньше всего.',r:'LYU-BÍ-TYE ZHYZN RÁN-SHE VSYE-VÓ.',e:'Love life above everything.',src:'Достоевский'},
+  {c:'Смирись, гордый человек, и прежде всего сломи свою гордость.',r:'SMIR-ÍS GAR-DÝ CHE-LA-VYÉK I PRYE-ZHDE VSYE-VÓ SLA-MÍ SVO-YÚ GOR-DAST.',e:'Humble yourself, proud man, and above all break your pride.',src:'Достоевский'},
+  {c:'Люди как люди. Любят деньги, но ведь это всегда было.',r:'LYÚ-DI KAK LYÚ-DI. LYÚ-BYAT DYÉN-GI NO VYED É-TA FSYEG-DÁ BY-LO.',e:'People are like people. They love money, but then that was always the case.',src:'Булгаков — Мастер и Маргарита'},
+  {c:'Злых людей нет на свете, есть только люди несчастливые.',r:'ZLYKH LYÚ-DYY NYÉT NA SVYE-TYE YES-T TOL-KA LYÚ-DI NYE-SCHAST-LÍ-VY-YE.',e:'There are no evil people in the world, only unhappy ones.',src:'Булгаков'},
+  {c:'Чем меньше женщину мы любим, тем легче нравимся мы ей.',r:'CHEM MYÉN-SHE ZHÉN-SHCHI-NU MY LYU-BÍM TYEM LYÓKH-CHE NRÁ-VIM-SYA MY YEY.',e:'The less we love a woman, the easier it is for her to like us.',src:'Пушкин — Евгений Онегин'},
+  {c:'Мы все учились понемногу чему-нибудь и как-нибудь.',r:'MY VSYE U-CHÍL-IS PA-NYEM-NÓ-GU CHE-MÚ-NYI-BUD I KAK-NYI-BUD.',e:'We all learned a little of something and somehow.',src:'Пушкин — Евгений Онегин'},
+  {c:'И скучно, и грустно, и некому руку подать в минуту душевной невзгоды.',r:'I SKÚ-CHNA I GRÚS-NA I NYÉ-KA-MU RÚ-KU PO-DAT V MI-NÚ-TU DU-SHÉV-NAY NYEV-ZGÓ-DY.',e:'How dull and sad, and there is no one to lend a hand in a moment of adversity.',src:'Лермонтов'},
+  {c:'Что без страданий жизнь поэта? И что без бури океан?',r:'SHTO BYES STRA-DÁ-NIY ZHYZN PA-É-TA? I SHTO BYES BÚ-RI A-KYE-ÁN?',e:'What is a poet life without suffering? And what is the ocean without a storm?',src:'Лермонтов'},
+  {c:'Революция — это музыка, которую надо уметь слышать.',r:'RYE-VA-LYÚ-TSI-YA — É-TA MÚ-ZY-KA KA-TÓ-RU-YU NA-DA U-MYÉT SLÝSH-AT.',e:'Revolution is music that one must know how to hear.',src:'Блок'},
+  {c:'Не стыдно чего-то не знать, стыдно не хотеть знать.',r:'NYÉ STÝD-NA CHE-VÓ-TA NYÉ ZNAT STÝD-NA NYÉ KHA-TYÉT ZNAT.',e:'It is not shameful not to know; it is shameful not to want to know.',src:'Русская мудрость'},
+  {c:'Слова — это тени мыслей.',r:'SLO-VÁ — É-TA TYÉN-I MÝS-LYEY.',e:'Words are shadows of thoughts.',src:'Русская мудрость'},
+  {c:'Счастье — это побочный продукт правильного образа жизни.',r:'SCHÁS-TYE — É-TA PA-BÓ-CHNY PRA-DUKT PRÁ-VIL-NA-VA AB-RA-ZA ZHYZ-NYI.',e:'Happiness is a by-product of the right way of living.',src:'Мудрость'},
+  {c:'Парламент принял закон о защите персональных данных граждан.',r:'PAR-LÁ-MYENT PRI-NYÁL ZA-KÓN A ZA-SHCHÍ-TYE PYER-SA-NÁL-NYKH DÁN-NYKH GRAZH-DÁN.',e:'Parliament passed a law on the protection of citizens personal data.',src:'Новости'},
+  {c:'Центральный банк повысил ключевую ставку на полпроцента.',r:'TSEN-TRÁL-NY BANK PA-VÝ-SIL KLYÚ-CHE-VU-YU STÁF-KU NA POL-PRO-TSÉEN-TA.',e:'The central bank raised the key interest rate by half a percent.',src:'Финансы'},
+  {c:'Учёные обнаружили новый экзопланетный кандидат в обитаемой зоне.',r:'U-CHÓ-NY-YE AB-NA-RÚ-ZHI-LI NÓ-VY EK-ZA-PLA-NYÉT-NY KAN-DI-DÁT V A-BI-TÁ-YE-MAY ZÓ-NYE.',e:'Scientists discovered a new exoplanet candidate in the habitable zone.',src:'Наука'},
+  {c:'Переговоры о прекращении огня завершились без результата.',r:'PYE-RYE-GA-VÓ-RY A PRYE-KRA-SHCHYÉ-NI-I AG-NYÁA ZA-VYÉR-SHI-LIS BYES RYE-ZUL-TÁ-TA.',e:'Ceasefire negotiations ended without result.',src:'Новости'},
+  {c:'Министерство иностранных дел выразило озабоченность ситуацией.',r:'MI-NIS-TYÉR-STVA I-NA-STRÁN-NYKH DYED VÝ-RA-ZI-LA A-ZA-BÓ-CHEN-NAST SI-TU-Á-TSI-YEY.',e:'The Ministry of Foreign Affairs expressed concern over the situation.',src:'Новости'},
+  {c:'Согласно последним данным, уровень инфляции достиг максимума.',r:'SAG-LÁS-NA PAS-LYÉD-NIM DÁN-NYM ÚR-A-VYEN IN-FLYÁ-TSI-I DAS-TÍK MAK-SÍ-MU-MA.',e:'According to the latest data, inflation reached a historic high.',src:'Экономика'},
+  {c:'Федеральный суд отклонил апелляцию и оставил приговор в силе.',r:'FYE-DYE-RÁL-NY SUD AT-KLA-NÍL A-PYE-LYÁT-SI-YU I AS-TÁ-VIL PRI-GA-VÓR V SÍ-LYE.',e:'The federal court rejected the appeal and upheld the verdict.',src:'Право'},
+  {c:'Природа не храм, а мастерская, и человек в ней работник.',r:'PRI-RÓ-DA NYÉT KHRAM A MAS-TYR-SKÁ-YA, I CHE-LA-VYÉK V NYEY RA-BÓT-NIK.',e:'Nature is not a temple but a workshop and man is a worker in it.',src:'Тургенев — Отцы и дети'},
+  {c:'Во дни сомнений, во дни тягостных раздумий о судьбах моей родины — ты один мне поддержка и опора.',r:'VA DNI SAM-NYÉN-I, VA DNI TYÁH-GAST-NYKH RAZ-DÚ-MI A SUD-BÁK HA-YEY RA-DÍ-NY — TY A-DÍN MNYE PÁD-DYERZH-KA I A-PÓ-RA.',e:'In days of doubt in days of painful brooding — you alone are my support and stay.',src:'Тургенев — Русский язык'},
+  {c:'Берегите наш язык, наш прекрасный русский язык.',r:'BYE-RYE-GÍ-TYE NASH YA-ZÝK, NASH PREK-RÁS-NY RÚS-SKI YA-ZÝK.',e:'Cherish our language our beautiful Russian language.',src:'Тургенев'},
+  {c:'Хочешь быть счастливым? Выучись сначала терпеть несчастье.',r:'KHÓ-CHESH BÝT SCHAST-LÍ-VYM? VÝ-U-CHIS SNA-CHA-LA TYIR-PYÉT NYE-SCHÁST-YE.',e:'Do you want to be happy? First learn to endure unhappiness.',src:'Тургенев'},
+  {c:'Чуден Днепр при тихой погоде.',r:'CHÚD-EN DNYEPR PRI TÍ-KHAY PA-GÓ-DYE.',e:'Wondrous is the Dnieper in quiet weather.',src:'Гоголь — Тарас Бульба'},
+  {c:'Нет уз святее товарищества.',r:'NYÉT UZ SVA-TYÉY-YE TA-VÁ-RISH-CHES-TVA.',e:'There are no bonds more sacred than comradeship.',src:'Гоголь — Тарас Бульба'},
+  {c:'Скучно на этом свете, господа!',r:'SKÚCH-NA NA É-TAM SVYE-TYE, GAS-PA-DÁ!',e:'It is dull in this world ladies and gentlemen!',src:'Гоголь'},
+  {c:'Знаете ли вы украинскую ночь? О, вы не знаете украинской ночи!',r:'ZNÁ-YI-TYE LI VY UK-RA-ÍN-SKU-YU NÓCH? O, VY NYÉ ZNÁ-YI-TYE UK-RA-ÍN-SKAY NÓ-CHI!',e:'Do you know a Ukrainian night? Oh you do not know a Ukrainian night!',src:'Гоголь'},
+  {c:'Быть знаменитым некрасиво.',r:'BYT ZNA-MYE-NÍ-TYM NYE-KRA-SÍ-VA.',e:'To be famous is not seemly.',src:'Пастернак'},
+  {c:'Цель творчества — самоотдача, а не шумиха, не успех.',r:'TSYEL TVÓR-CHES-TVA — SA-MA-AT-DÁ-CHA, A NYÉ SHU-MÍ-KHA, NYÉ US-PYÉKH.',e:'The goal of creativity is self-giving not noise not success.',src:'Пастернак'},
+  {c:'Жить — это не поле перейти.',r:'ZHIT — É-TA NYÉ PÓ-LYE PYE-RYE-TÍ.',e:'To live is not like crossing a field.',src:'Пастернак — Доктор Живаго'},
+  {c:'Я была тогда с моим народом там, где мой народ, к несчастью, был.',r:'YA BY-LÁ TAG-DÁ S MA-ÍM NA-RÓ-DAM TAM GDYE MOY NA-RÓT K NYE-SCHÁST-YU BYL.',e:'I was then with my people there where my people to their misfortune were.',src:'Ахматова — Реквием'},
+  {c:'Светить всегда, светить везде, до дней последних донца.',r:'SVYE-TÍT FSYEG-DÁ, SVYE-TÍT VYEZ-DYÉ, DA DNYÉY PAS-LYÉD-NIKH DÁN-TSA.',e:'To shine always to shine everywhere to the very last days.',src:'Маяковский'},
+  {c:'Я последний поэт деревни.',r:'YA PAS-LYÉD-NY PA-ÉT DYE-RYÉV-NYI.',e:'I am the last poet of the village.',src:'Есенин'},
+  {c:'Отговорила роща золотая берёзовым весёлым языком.',r:'AT-GA-VA-RÍ-LA RÓ-SHCHA ZA-LA-TÁ-YA BYE-RYÓZ-A-VYM VYE-SYÓ-LYM YA-ZY-KÓM.',e:'The golden grove has spoken its last in the merry tongue of birch trees.',src:'Есенин'},
+  {c:'Жизнь коротка, искусство долговечно.',r:'ZHYZN KA-RÓT-KA, IS-KÚS-TVA DAL-GA-VYÉCH-NA.',e:'Life is short art is long.',src:'Набоков'},
+  {c:'Мир движется вперёд благодаря тем, кто страдает.',r:'MIR DVÍ-ZHE-TSA VPYE-RYÓD BLA-GA-DA-RYÁ TYEM KTO STRA-DÁ-YET.',e:'The world advances thanks to those who suffer.',src:'Толстой'},
+  {c:'Если в жизни нет смысла, надо его создать.',r:'YES-LI V ZHYZ-NYI NYÉT SMÝS-LA NÁ-DA YE-VÓ SAZ-DÁT.',e:'If life has no meaning one must create it.',src:'Толстой'},
+  {c:'Все великие истины начинались как богохульства.',r:'VSYE VYE-LÍ-KI-YE IS-TÍ-NY NA-CHI-NÁ-LIS KAK BA-GA-KHÚL-STVA.',e:'All great truths begin as blasphemies.',src:'Толстой'},
+  {c:'Самое трудное — это начать.',r:'SA-MA-YE TRÚD-NA-YE — É-TA NA-CHÁT.',e:'The hardest thing is to begin.',src:'Чехов'},
+  {c:'Медицина — моя законная жена, а литература — любовница.',r:'MYE-DI-TSÍ-NA — MA-YÁ ZA-KÓN-NA-YA ZHI-NÁ, A LI-TYE-RA-TÚ-RA — LYU-BÓV-NI-TSA.',e:'Medicine is my lawful wife and literature is my mistress.',src:'Чехов'},
+  {c:'Если Бога нет, всё позволено.',r:'YES-LI BÓ-GA NYÉT VSYO PAZ-VÓ-LYE-NA.',e:'If God does not exist everything is permitted.',src:'Достоевский — Братья Карамазовы'},
+  {c:'Любите жизнь раньше всего.',r:'LYU-BÍ-TYE ZHYZN RÁN-SHE VSYE-VÓ.',e:'Love life above everything.',src:'Достоевский'},
+  {c:'Смирись, гордый человек, и прежде всего сломи свою гордость.',r:'SMIR-ÍS GAR-DÝ CHE-LA-VYÉK I PRYE-ZHDE VSYE-VÓ SLA-MÍ SVO-YÚ GOR-DAST.',e:'Humble yourself proud man and above all break your pride.',src:'Достоевский'},
+  {c:'Люди как люди. Любят деньги, но ведь это всегда было.',r:'LYÚ-DI KAK LYÚ-DI. LYÚ-BYAT DYÉN-GI NO VYED É-TA FSYEG-DÁ BY-LO.',e:'People are like people. They love money but then that was always the case.',src:'Булгаков — Мастер и Маргарита'},
+  {c:'Злых людей нет на свете, есть только люди несчастливые.',r:'ZLYKH LYÚ-DYY NYÉT NA SVYE-TYE YES-T TOL-KA LYÚ-DI NYE-SCHAST-LÍ-VY-YE.',e:'There are no evil people in the world only unhappy ones.',src:'Булгаков'},
+  {c:'Чем меньше женщину мы любим, тем легче нравимся мы ей.',r:'CHEM MYÉN-SHE ZHÉN-SHCHI-NU MY LYU-BÍM TYEM LYÓKH-CHE NRÁ-VIM-SYA MY YEY.',e:'The less we love a woman the easier it is for her to like us.',src:'Пушкин — Евгений Онегин'},
+  {c:'Мы все учились понемногу чему-нибудь и как-нибудь.',r:'MY VSYE U-CHÍL-IS PA-NYEM-NÓ-GU CHE-MÚ-NYI-BUD I KAK-NYI-BUD.',e:'We all learned a little of something and somehow.',src:'Пушкин — Евгений Онегин'},
+  {c:'И скучно, и грустно, и некому руку подать в минуту душевной невзгоды.',r:'I SKÚ-CHNA I GRÚS-NA I NYÉ-KA-MU RÚ-KU PO-DAT V MI-NÚ-TU DU-SHÉV-NAY NYEV-ZGÓ-DY.',e:'How dull and sad and there is no one to lend a hand in a moment of adversity.',src:'Лермонтов'},
+  {c:'Что без страданий жизнь поэта? И что без бури океан?',r:'SHTO BYES STRA-DÁ-NIY ZHYZN PA-É-TA? I SHTO BYES BÚ-RI A-KYE-ÁN?',e:'What is a poet life without suffering? And what is the ocean without a storm?',src:'Лермонтов'},
+  {c:'Революция — это музыка, которую надо уметь слышать.',r:'RYE-VA-LYÚ-TSI-YA — É-TA MÚ-ZY-KA KA-TÓ-RU-YU NA-DA U-MYÉT SLÝSH-AT.',e:'Revolution is music that one must know how to hear.',src:'Блок'},
+  {c:'Не стыдно чего-то не знать, стыдно не хотеть знать.',r:'NYÉ STÝD-NA CHE-VÓ-TA NYÉ ZNAT STÝD-NA NYÉ KHA-TYÉT ZNAT.',e:'It is not shameful not to know; it is shameful not to want to know.',src:'Русская мудрость'},
+  {c:'Слова — это тени мыслей.',r:'SLO-VÁ — É-TA TYÉN-I MÝS-LYEY.',e:'Words are shadows of thoughts.',src:'Русская мудрость'},
+  {c:'Счастье — это побочный продукт правильного образа жизни.',r:'SCHÁS-TYE — É-TA PA-BÓ-CHNY PRA-DUKT PRÁ-VIL-NA-VA AB-RA-ZA ZHYZ-NYI.',e:'Happiness is a by-product of the right way of living.',src:'Мудрость'},
+  {c:'Парламент принял закон о защите персональных данных граждан.',r:'PAR-LÁ-MYENT PRI-NYÁL ZA-KÓN A ZA-SHCHÍ-TYE PYER-SA-NÁL-NYKH DÁN-NYKH GRAZH-DÁN.',e:'Parliament passed a law on the protection of citizens personal data.',src:'Новости'},
+  {c:'Центральный банк повысил ключевую ставку на полпроцента.',r:'TSEN-TRÁL-NY BANK PA-VÝ-SIL KLYÚ-CHE-VU-YU STÁF-KU NA POL-PRO-TSÉEN-TA.',e:'The central bank raised the key interest rate by half a percent.',src:'Финансы'},
+  {c:'Учёные обнаружили новый экзопланетный кандидат в обитаемой зоне.',r:'U-CHÓ-NY-YE AB-NA-RÚ-ZHI-LI NÓ-VY EK-ZA-PLA-NYÉT-NY KAN-DI-DÁT V A-BI-TÁ-YE-MAY ZÓ-NYE.',e:'Scientists discovered a new exoplanet candidate in the habitable zone.',src:'Наука'},
+  {c:'Переговоры о прекращении огня завершились без результата.',r:'PYE-RYE-GA-VÓ-RY A PRYE-KRA-SHCHYÉ-NI-I AG-NYÁA ZA-VYÉR-SHI-LIS BYES RYE-ZUL-TÁ-TA.',e:'Ceasefire negotiations ended without result.',src:'Новости'},
+  {c:'Министерство иностранных дел выразило озабоченность ситуацией.',r:'MI-NIS-TYÉR-STVA I-NA-STRÁN-NYKH DYED VÝ-RA-ZI-LA A-ZA-BÓ-CHEN-NAST SI-TU-Á-TSI-YEY.',e:'The Ministry of Foreign Affairs expressed concern over the situation.',src:'Новости'},
+  {c:'Согласно последним данным, уровень инфляции достиг максимума.',r:'SAG-LÁS-NA PAS-LYÉD-NIM DÁN-NYM ÚR-A-VYEN IN-FLYÁ-TSI-I DAS-TÍK MAK-SÍ-MU-MA.',e:'According to the latest data inflation reached a historic high.',src:'Экономика'},
+  {c:'Федеральный суд отклонил апелляцию и оставил приговор в силе.',r:'FYE-DYE-RÁL-NY SUD AT-KLA-NÍL A-PYE-LYÁT-SI-YU I AS-TÁ-VIL PRI-GA-VÓR V SÍ-LYE.',e:'The federal court rejected the appeal and upheld the verdict.',src:'Право'},
+  {c:'Университет развивает все способности, в том числе — глупость.',r:'U-NI-VYER-SI-TYÉT RAZ-VÍ-VA-YIT VSYE SPA-SÓB-NAS-TI, V TOM CHÍS-LYE — GLÚ-PAST.',e:'A university develops all abilities including stupidity.',src:'Чехов'},
+];
+var PASSAGES = [
+  {
+    title: 'Евгений Онегин (глава I)',
+    author: 'А.С. Пушкин',
+    lines: [
+      {c:'Мой дядя самых честных правил,',e:'My uncle — a man of the most honourable principles,',r:'MÓY DYÁ-DYA SÁ-MYKH CHÉST-NYKH PRÁ-VIL,'},
+      {c:'Когда не в шутку занемог,',e:'When he fell seriously ill,',r:'KOG-DÁ NYÉ V SHÚT-KU ZA-NYI-MÓG,'},
+      {c:'Он уважать себя заставил',e:'He forced others to respect him',r:'ON U-VA-ZHÁT SYI-BYÁA ZAS-TÁ-VIL'},
+      {c:'И лучше выдумать не мог.',e:'And could not have devised a better scheme.',r:'I LÚ-CHSHE VÝ-DU-MAT NYÉ MÓG.'},
+      {c:'Его пример другим наука;',e:'His example is a lesson to others;',r:'YI-VÓ PRI-MYÉR DRU-GÍM NA-ÚKA;'},
+      {c:'Но, боже мой, какая скука',e:'But, good heavens, what a bore',r:'NO, BÓ-ZHE MOY, KA-KÁ-YA SKÚ-KA'},
+      {c:'С больным сидеть и день и ночь,',e:'To sit by a sick man day and night,',r:'S BAL-NÝM SI-DYÉT I DYEN I NÓCH,'},
+      {c:'Не отходя ни шагу прочь!',e:'Not stepping away a single step!',r:'NYÉ AT-KHA-DYÁ NYI SHÁ-GU PRÓCH!'},
+    ]
+  },
+  {
+    title: 'Я вас любил',
+    author: 'А.С. Пушкин',
+    lines: [
+      {c:'Я вас любил: любовь ещё, быть может,',e:'I loved you: love, perhaps, even now',r:'YA VAS LYU-BÍL: LYU-BÓF YI-SHCHÓ BÝT MÓ-ZHET,'},
+      {c:'В душе моей угасла не совсем;',e:'Has not entirely faded from my soul;',r:'V DU-SHYÉ MA-YÉY U-GÁS-LA NYÉ SAF-SYÉM;'},
+      {c:'Но пусть она вас больше не тревожит;',e:'But let it trouble you no more;',r:'NO PUST A-NÁ VAS BÓL-SHE NYÉ TRYE-VÓ-ZHIT;'},
+      {c:'Я не хочу печалить вас ничем.',e:'I do not wish to sadden you with anything.',r:'YA NYÉ KHA-CHÚ PYI-CHÁЛ-IT VAS NYI-CHYÉM.'},
+      {c:'Я вас любил безмолвно, безнадежно,',e:'I loved you silently, hopelessly,',r:'YA VAS LYU-BÍL BYIZ-MÓLV-NA, BYIZ-NA-DYÉZH-NA,'},
+      {c:'То робостью, то ревностью томим;',e:'Now tormented by shyness, now by jealousy;',r:'TO RÓ-BAS-TYU, TO RYÉV-NAS-TYU TA-MÍM;'},
+      {c:'Я вас любил так искренно, так нежно,',e:'I loved you so sincerely, so tenderly,',r:'YA VAS LYU-BÍL TAK ÍS-KREN-NA, TAK NYÉZH-NA,'},
+      {c:'Как дай вам бог любимой быть другим.',e:'As God grant you may be loved by another.',r:'KAK DAY VAM BOG LYU-BÍ-MAY BÝT DRU-GÍM.'},
+    ]
+  },
+  {
+    title: 'Парус',
+    author: 'М.Ю. Лермонтов',
+    lines: [
+      {c:'Белеет парус одинокий',e:'A lone sail gleams white',r:'BYIL-YÉ-YIT PÁ-RUS A-DI-NÓ-KI'},
+      {c:'В тумане моря голубом!',e:'In the blue haze of the sea!',r:'V TU-MÁ-NYE MÓ-RYA GA-LU-BÓM!'},
+      {c:'Что ищет он в стране далёкой?',e:'What does it seek in a distant land?',r:'SHTO ÍS-CHET ON V STRA-NYÉE DA-LYÓH-KAY?'},
+      {c:'Что кинул он в краю родном?',e:'What did it leave behind at home?',r:'SHTO KÍ-NUL ON V KRA-YÚ RAD-NÓM?'},
+      {c:'Играют волны — ветер свищет,',e:'The waves play — the wind whistles,',r:'IK-RÁ-YUT VÓL-NY — VYÉT-IR SVÍSH-CHET,'},
+      {c:'И мачта гнётся и скрипит…',e:'And the mast bends and creaks…',r:'I MÁCH-TA GNYÓH-TSYA I SKRI-PÍT…'},
+      {c:'Увы! Он счастия не ищет',e:'Alas! It seeks no happiness',r:'U-VÝ! ON SCHÁS-TI-YA NYÉ ÍS-CHET'},
+      {c:'И не от счастия бежит!',e:'And does not flee from happiness!',r:'I NYÉ AT SCHÁS-TI-YA BYI-ZHÍT!'},
+    ]
+  },
+  {
+    title: 'Мёртвые души (начало)',
+    author: 'Н.В. Гоголь',
+    lines: [
+      {c:'В ворота гостиницы губернского города NN въехала довольно красивая рессорная бричка.',e:'Into the gates of the inn of the provincial town of NN drove a rather handsome spring carriage.',r:'V VA-RÓ-TA GAS-TÍ-NI-TSY GU-BYÉRN-SKA-VA GÓ-RA-DA NN VYÉ-KHA-LA DA-VÓL-NA KRA-SÍ-VA-YA RYES-SÓR-NA-YA BRICH-KA.'},
+      {c:'В бричке сидел господин, не красавец, но и не дурной наружности.',e:'In the carriage sat a gentleman — not handsome, but not of unpleasant appearance either.',r:'V BRICH-KYÉ SI-DYÉL GAS-PA-DÍN, NYÉ KRA-SÁ-VYETS, NO I NYÉ DUR-NÓY NA-RÚZH-NAS-TI.'},
+      {c:'Ни слишком толст, ни слишком тонок.',e:'Neither too fat, nor too thin.',r:'NYI SLÍSH-KAM TÓLST, NYI SLÍSH-KAM TÓ-NAK.'},
+      {c:'Нельзя сказать, чтобы стар, однако ж и не так, чтобы слишком молод.',e:'One could not say he was old, yet not so young either.',r:'NYIL-ZYÁ SKA-ZÁDT, SHTO-BY STAR, AD-NÁ-KA ZH I NYÉ TAK, SHTO-BY SLÍSH-KAM MÓ-LAT.'},
+    ]
+  },
+  {
+    title: 'Анна Каренина (начало)',
+    author: 'Л.Н. Толстой',
+    lines: [
+      {c:'Все счастливые семьи похожи друг на друга,',e:'All happy families are alike,',r:'VSYE SCHAST-LÍ-VY-YE SIM-YÍ PA-KHÓ-ZHI DRÚG NA DRÚ-GA,'},
+      {c:'каждая несчастливая семья несчастлива по-своему.',e:'each unhappy family is unhappy in its own way.',r:'KÁZ-DYA-YA NYE-SCHAST-LÍ-VA-YA SIM-YÁ NYE-SCHAST-LÍ-VA PA-SVA-YÉ-MU.'},
+      {c:'Всё смешалось в доме Облонских.',e:'Everything was in confusion in the Oblonsky household.',r:'VSYO SME-SHÁL-AS V DÓ-MYE AB-LÓN-SKIKH.'},
+      {c:'Жена узнала, что муж был в связи с бывшею в их доме француженкой-гувернанткой.',e:'The wife had found out that her husband was having an affair with the French governess.',r:'ZHI-NÁ UZ-NÁ-LA, SHTO MUZH BYL V SVYÁ-ZI S BÝV-SHE-YU V IKH DÓ-MYE FRAN-TSÚ-ZHIN-KAY GU-VYR-NÁNT-KAY.'},
+    ]
+  },
+  {
+    title: 'Мастер и Маргарита (начало)',
+    author: 'М.А. Булгаков',
+    lines: [
+      {c:'Однажды весной, в час небывало жаркого заката,',e:'One spring, at the hour of an extraordinarily hot sunset,',r:'AD-NÁZ-DY VIS-NÓY, V CHAS NYI-BY-VÁ-LA ZHÁR-KA-VA ZA-KÁ-TA,'},
+      {c:'в Москве, на Патриарших прудах,',e:'in Moscow, at Patriarch\'s Ponds,',r:'V MASK-VYÉ, NA PAT-RI-ÁR-SHIKH PRÚ-DAKH,'},
+      {c:'появились два гражданина.',e:'two citizens appeared.',r:'PA-YA-VÍ-LIS DVA GRAZH-DA-NÍ-NA.'},
+      {c:'Первый из них — приблизительно сорокалетний —',e:'The first of them — about forty years old —',r:'PYÉR-VY IZ NIKH — PRIB-LI-ZÍ-TYIL-NA SA-RA-KA-LYÉT-NY —'},
+      {c:'был одет в серенькую летнюю пару.',e:'was dressed in a grey summer suit.',r:'BYL A-DYÉT V SYI-RYEN-KU-YU LYÉT-NYU-YU PÁ-RU.'},
+    ]
+  },
+  {
+    title: 'Преступление и наказание (начало)',
+    author: 'Ф.М. Достоевский',
+    lines: [
+      {c:'В начале июля, в чрезвычайно жаркое время,',e:'In early July, in an exceptionally hot spell,',r:'V NA-CHA-LYÉ I-YÚ-LYA, V CHRIZ-VY-CHÁY-NA ZHÁR-KA-YE VRYE-MYA,'},
+      {c:'под вечер, один молодой человек вышел из своей каморки,',e:'toward evening, a young man came out of his garret,',r:'PAD VYÉCH-IR, A-DÍN MA-LA-DÓY CHE-LA-VYÉK VÝ-SHIL IZ SVO-YÉY KA-MÓR-KI,'},
+      {c:'которую нанимал от жильцов в С-м переулке,',e:'which he rented from tenants in S— Lane,',r:'KA-TÓ-RU-YU NA-NI-MÁL AT ZHYL-TSÓF V S-M PYI-RYI-ÚL-KYE,'},
+      {c:'на улицу и медленно, как бы в нерешимости, отправился к К-ну мосту.',e:'into the street and slowly, as if in hesitation, set off toward K— Bridge.',r:'NA Ú-LI-TSU I MYÉD-LYIN-NA KAK BY V NYI-RYI-SHÍ-MAS-TI, AT-PRÁ-VIL-SYA K K-NU MÓS-TU.'},
+    ]
+  },
+  {
+    title: 'Вишнёвый сад (монолог)',
+    author: 'А.П. Чехов',
+    lines: [
+      {c:'Вся Россия — наш сад.',e:'All Russia is our orchard.',r:'VSYÁ RAS-SÍ-YA — NASH SAT.'},
+      {c:'Земля велика и прекрасна, есть на ней много чудесных мест.',e:'The land is great and beautiful — there are many wonderful places in it.',r:'ZYIM-LYÁ VYI-LI-KÁ I PREK-RÁS-NA, YEST NA NYÉY MNÓ-GA CHU-DYÉS-NYKH MYÉST.'},
+      {c:'Подумайте, Аня: ваш дед, прадед и все ваши предки,',e:'Think, Anya: your grandfather, great-grandfather and all your ancestors,',r:'PA-DÚ-MAY-TYE, Á-NYA: VASH DYED, PRA-DYED I VSYE VÁ-SHI PRYED-KI,'},
+      {c:'владевшие крепостными людьми,',e:'who owned serfs,',r:'VLA-DYÉV-SHI-YE KRYIP-AZ-NÝ-MI LYÚ-DY-MI,'},
+      {c:'неужели с каждого дерева в саду, с каждого листка на вас не глядят человеческие существа?',e:'surely from every cherry-tree in the orchard, every leaf and every trunk, do not human beings look out at you?',r:'NYI-U-ZHIL S KÁZ-DA-VA DYÉR-YI-VA V SA-DÚ, S KÁZ-DA-VA LIST-KÁ NA VAS NYÉ GLYÁ-DYAT CHE-LA-VYÉCH-ES-KI-YE SU-SHCHEST-VA?'},
+    ]
+  },
+  {
+    title: 'Ночь, улица, фонарь, аптека',
+    author: 'А.А. Блок',
+    lines: [
+      {c:'Ночь, улица, фонарь, аптека,',e:'Night, street, lamp, pharmacy,',r:'NÓCH, Ú-LI-TSA, FA-NÁR, AP-TYÉ-KA,'},
+      {c:'Бессмысленный и тусклый свет.',e:'A senseless and dim light.',r:'BYIS-MÝSL-YIN-NY I TÚS-KLY SVYET.'},
+      {c:'Живи ещё хоть четверть века —',e:'Live another quarter century —',r:'ZHI-VÍ YI-SHCHÓ KHOT CHET-VYERT VYÉK-A —'},
+      {c:'Всё будет так. Исхода нет.',e:'Everything will be the same. There is no escape.',r:'VSYO BÚ-DIT TAK. IS-KHÓ-DA NYÉT.'},
+      {c:'Умрёшь — начнёшь опять сначала,',e:'You will die — and start over again,',r:'UM-RYÓSH — NACH-NYÓSH A-PYÁT SNA-CHÁ-LA,'},
+      {c:'И повторится всё, как встарь:',e:'And everything will repeat as before:',r:'I PAV-TA-RÍT-SYA VSYO KAK VSTÁR:'},
+      {c:'Ночь, ледяная рябь канала,',e:'Night, the icy ripple of the canal,',r:'NÓCH, LYI-DYÁ-NA-YA RYAB KA-NÁ-LA,'},
+      {c:'Аптека, улица, фонарь.',e:'Pharmacy, street, lamp.',r:'AP-TYÉ-KA, Ú-LI-TSA, FA-NÁR.'},
+    ]
+  },
+  {
+    title: 'Не жалею, не зову, не плачу',
+    author: 'С.А. Есенин',
+    lines: [
+      {c:'Не жалею, не зову, не плачу,',e:'I do not regret, do not call, do not weep,',r:'NYÉ ZHA-LYÉY-U, NYÉ ZA-VÚ, NYÉ PLÁ-CHU,'},
+      {c:'Всё пройдёт, как с белых яблонь дым.',e:'All will pass like smoke from white apple trees.',r:'VSYO PRAY-DYÓT, KAK S BYÉLYKH ÁB-LAN DÝM.'},
+      {c:'Увяданья золотом охваченный,',e:'Touched by the gold of fading,',r:'UV-YA-DÁN-YA ZO-LO-TOM AKH-VÁ-CHIN-NY,'},
+      {c:'Я не буду больше молодым.',e:'I shall be young no more.',r:'YA NYÉ BÚ-DU BÓL-SHE MA-LA-DÝM.'},
+      {c:'Ты теперь не так уж будешь биться,',e:'You will no longer beat so,',r:'TY TYI-PYÉR NYÉ TAK UZSH BÚ-DYISH BÍT-SYA,'},
+      {c:'Сердце, тронутое холодком,',e:'Heart, touched by coldness,',r:'SYÉR-TSEH, TRÓ-NU-TYE KHA-LAD-KÓM,'},
+      {c:'И страна берёзового ситца',e:'And the land of birch-bark calico',r:'I STRA-NÁ BYIR-YÓ-ZA-VA-VA SÍT-TSA'},
+      {c:'Не заманит шляться босиком.',e:'Will not lure me to wander barefoot.',r:'NYÉ ZA-MÁ-NIT SHLYA-TSYA BA-SI-KÓM.'},
+    ]
+  },
+];
+
+// Build items for Ultra mode — only hard content
+function buildUltraItems(){
+  var words = shuffle(WL3.slice()).slice(0,25).map(function(w){return{c:w.w,r:w.r,e:w.e,t:'word',time:10};});
+  var phrases = shuffle(PL3.slice()).slice(0,25).map(function(p){return{c:p.c,r:p.r,e:p.e,t:'phrase',time:15};});
+  var sentences = shuffle(HARD_SENTENCES).slice(0,50).map(function(s){return{c:s.c,r:s.r,e:s.e,t:'sentence',src:s.src,time:22};});
+  // Interleave: word → phrase → sentence, cycling until all pools exhausted
+  var all=[];
+  var pools=[words,phrases,sentences];
+  var ptrs=[0,0,0];
+  // Pattern: W P S S — repeat until all pools drained
+  var pattern=[0,1,2,2];
+  var pi=0;
+  while(ptrs[0]<pools[0].length||ptrs[1]<pools[1].length||ptrs[2]<pools[2].length){
+    var idx=pattern[pi%pattern.length];pi++;
+    if(ptrs[idx]<pools[idx].length){all.push(pools[idx][ptrs[idx]++]);}
+    else{
+      // Skip exhausted pool, try next in pattern
+      var found=false;
+      for(var k=0;k<3;k++){if(ptrs[k]<pools[k].length){all.push(pools[k][ptrs[k]++]);found=true;break;}}
+      if(!found)break;
+    }
+  }
+  return all;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+var TABS=[
+  {id:'letters',  label:'Letters',    icon:'А'},
+  {id:'syllables',label:'Syllables',  icon:'АБ'},
+  {id:'words',    label:'Words',      icon:'★'},
+  {id:'flash',    label:'Speed Flash',icon:'⚡'},
+  {id:'phrases',  label:'Phrases',    icon:'📜'},
+  {id:'run',      label:'Fluency Run',icon:'🔥',run:true},
+];
+TABS.forEach(function(t){
+  var b=document.createElement('button');
+  b.className='nav-btn'+(t.run?' run-tab':'');
+  b.id='nb-'+t.id;
+  b.innerHTML='<span>'+t.icon+'<\/span>'+t.label;
+  b.onclick=function(){showTab(t.id);};
+  document.getElementById('nav').appendChild(b);
+  var m=document.createElement('div');
+  m.className='module';m.id='m-'+t.id;
+  document.getElementById('modules').appendChild(m);
+});
+var curTab=null;
+function showTab(id){
+  if(curTab===id)return;
+  TABS.forEach(function(t){
+    document.getElementById('nb-'+t.id).classList.toggle('active',t.id===id);
+    document.getElementById('m-'+t.id).classList.toggle('active',t.id===id);
+  });
+  curTab=id;
+  var m=document.getElementById('m-'+id);
+  if(!m.dataset.built){BUILDERS[id]();m.dataset.built='1';}
+}
+
+// ── M1 LETTERS ───────────────────────────────────────────────────────────────
+function buildLetters(){
+  var mod=document.getElementById('m-letters');
+  var lv=1,sel=null,done={};
+  function pool(){return LETTERS.filter(function(l){return l.lv<=lv;});}
+  function render(){
+    mod.innerHTML='<h2 class="stitle">🔤 Letter Pronunciation<\/h2><p class="sdesc">Tap a letter — listen — then speak it. Score 80%+ to mark it mastered.<\/p>';
+    mod.appendChild(levelBar(lv,function(v){lv=v;sel=null;render();}));
+    insertBanner(mod);
+    var p=pool();
+    var g=document.createElement('div');g.className='lgrid';g.id='lg';
+    p.forEach(function(l,i){
+      var c=document.createElement('div');
+      c.className='lcard'+(sel===i?' sel':'')+(done[l.cyr]?' done':'');
+      c.innerHTML='<div class="lcard-cyr">'+l.cyr+'<\/div>'+
+        '<div class="lcard-cyr" style="font-size:14px;color:var(--muted)">'+l.cyr.toLowerCase()+'<\/div>'+
+        '<div class="lcard-rom">'+l.roman+'<\/div>'+
+        (done[l.cyr]?'<div class="lcard-chk">✓<\/div>':'');
+      c.onclick=function(){sel=i;render();};
+      g.appendChild(c);
+    });
+    mod.appendChild(g);
+    var det=document.createElement('div');det.id='ld';mod.appendChild(det);
+    if(sel!==null&&p[sel]){
+      var l=p[sel];
+      det.innerHTML='<div class="stage"><div class="stage-cyr" style="font-size:96px">'+l.cyr+'<\/div>'+
+        '<div class="stage-cyr" style="font-size:48px;color:rgba(255,255,255,.28);margin-top:-8px">'+l.cyr.toLowerCase()+'<\/div>'+
+        '<div class="stage-sub">'+l.sound+'<\/div><\/div>'+
+        '<div class="controls" id="lctrl"><\/div>';
+      var ctrl=document.getElementById('lctrl');
+      ctrl.appendChild(hearBtn(l.cyr,0.7,'Hear'));
+      ctrl.appendChild(hearBtn(l.cyr+'. '+l.cyr+'. '+l.cyr,0.5,'× 3 slowly'));
+      ctrl.appendChild(micWidget(l.cyr,function(pct){if(pct>=80){done[l.cyr]=true;render();}},{roman:l.roman}));
+    }
+  }
+  render();
+}
+
+// ── M2 SYLLABLES ─────────────────────────────────────────────────────────────
+function buildSyllables(){
+  var mod=document.getElementById('m-syllables');
+  var lv=1,idx=0,done={};
+  var pool=shuffle(SYL1.slice());
+  function rebuildPool(){pool=shuffle((lv===1?SYL1:lv===2?SYL2:SYL3).slice());idx=0;}
+  function render(){
+    mod.innerHTML='<h2 class="stitle">🔡 Syllable Reading<\/h2><p class="sdesc">Hear the syllable — reproduce it. Beginner = simple. Advanced = consonant clusters.<\/p>';
+    mod.appendChild(levelBar(lv,function(v){lv=v;rebuildPool();render();}));
+    insertBanner(mod);
+    if(idx>=pool.length)idx=0;
+    var s=pool[idx];
+    var pct=Math.round(idx/pool.length*100);
+    mod.insertAdjacentHTML('beforeend',
+      '<div class="pbar-wrap"><div class="pbar-fill" style="width:'+pct+'%"><\/div><\/div>'+
+      '<p class="ctr">'+(idx+1)+' \/ '+pool.length+(done[s.s]?' ✓':'')+'<\/p>'+
+      '<div class="stage">'+
+        '<div class="stage-cyr" style="font-size:100px">'+s.s+'<\/div>'+
+        '<div id="sr" style="min-height:28px"><\/div>'+
+        '<div class="stage-sub">Tap 🔊 to hear — then 🎤 to speak<\/div>'+
+      '<\/div>'+
+      '<div class="controls" id="sc"><\/div>'+
+      '<div class="nav-row">'+
+        '<button class="btn btn-out btn-sm" id="sp">← Prev<\/button>'+
+        '<div class="nav-ctr">'+(done[s.s]?'✓':'')+'<\/div>'+
+        '<button class="btn btn-ink btn-sm" id="sn">Next →<\/button>'+
+      '<\/div>'
+    );
+    var ctrl=document.getElementById('sc');
+    ctrl.appendChild(hearBtn(s.s,0.75,'Hear'));
+    ctrl.appendChild(hearBtn(s.s,0.45,'Slowly'));
+    var rv=document.createElement('button');rv.className='hint-btn';rv.textContent='👁 Show';
+    rv.onclick=function(){document.getElementById('sr').innerHTML='<div class="stage-roman">'+s.r+'<\/div>';};
+    ctrl.appendChild(rv);
+    ctrl.appendChild(micWidget(s.s, function(p2){if(p2>=80){done[s.s]=true;render();}}, {roman: s.r, syllable: true}));
+    document.getElementById('sp').disabled=idx===0;
+    document.getElementById('sp').onclick=function(){if(idx>0){idx--;render();}};
+    document.getElementById('sn').onclick=function(){idx=(idx+1)%pool.length;if(idx===0){pool=shuffle((lv===1?SYL1:lv===2?SYL2:SYL3).slice());}else{shuffleRemaining(pool,idx);}render();};
+  }
+  render();
+}
+
+// ── M3 WORDS ─────────────────────────────────────────────────────────────────
+function buildWords(){
+  var mod=document.getElementById('m-words');
+  var lv=1,idx=0,roman=false,done={};
+  var pool=shuffle(WL1.slice());
+  function rebuildPool(){pool=shuffle((lv===1?WL1:lv===2?WL2:WL3).slice());idx=0;}
+  function render(){
+    mod.innerHTML='<h2 class="stitle">📖 Word Reading<\/h2><p class="sdesc">Read aloud. Beginner shows romanization. Intermediate and Advanced hide it — read the Cyrillic directly.<\/p>';
+    mod.appendChild(levelBar(lv,function(v){lv=v;rebuildPool();roman=false;render();}));
+    insertBanner(mod);
+    if(idx>=pool.length)idx=0;
+    var w=pool[idx];var pct=Math.round(idx/pool.length*100);var showR=roman;
+    var wlen=w.w.length;
+    var wfont=wlen<=6?'clamp(40px,8vw,72px)':wlen<=10?'clamp(28px,6vw,52px)':wlen<=15?'clamp(20px,4.5vw,36px)':'clamp(14px,3.2vw,24px)';
+    mod.insertAdjacentHTML('beforeend',
+      '<div class="pbar-wrap"><div class="pbar-fill" style="width:'+pct+'%"><\/div><\/div>'+
+      '<p class="ctr">'+(idx+1)+' \/ '+pool.length+'<\/p>'+
+      '<div class="stage">'+
+        '<div class="stage-cyr" style="font-size:'+wfont+';letter-spacing:2px;word-break:break-all">'+w.w+'<\/div>'+
+        (showR?'<div class="stage-roman" id="word-roman">'+w.r+'<\/div>':'<div id="word-roman"><\/div>')+
+        '<div class="stage-en" style="margin-top:6px">'+w.e+'<\/div>'+
+      '<\/div>'+
+      '<div class="controls" id="wc"><\/div>'+
+      '<div class="nav-row">'+
+        '<button class="btn btn-out btn-sm" id="wp">← Prev<\/button>'+
+        '<div class="nav-ctr">'+(done[w.w]?'✓ mastered':'word '+(idx+1)+'\/'+pool.length)+'<\/div>'+
+        '<button class="btn btn-ink btn-sm" id="wn">Next →<\/button>'+
+      '<\/div>'
+    );
+    var ctrl=document.getElementById('wc');
+    ctrl.appendChild(hearBtn(w.w,0.80,'Hear'));
+    ctrl.appendChild(hearBtn(w.w,0.52,'Slowly'));
+    if(!showR){var rb=document.createElement('button');rb.className='hint-btn';rb.textContent='💡 Hint';
+      rb.onclick=function(){document.getElementById('word-roman').innerHTML='<div class="stage-roman">'+w.r+'<\/div>';rb.style.display='none';};
+      ctrl.appendChild(rb);}
+    ctrl.appendChild(micWidget(w.w,function(p2){if(p2>=80)done[w.w]=true;},{roman: w.r}));
+    document.getElementById('wp').disabled=idx===0;
+    document.getElementById('wp').onclick=function(){if(idx>0){idx--;roman=false;render();}};
+    document.getElementById('wn').onclick=function(){idx=(idx+1)%pool.length;if(idx===0){pool=shuffle((lv===1?WL1:lv===2?WL2:WL3).slice());}else{shuffleRemaining(pool,idx);}hint=false;roman=false;render();};
+  }
+  render();
+}
+
+// ── M4 SPEED FLASH ───────────────────────────────────────────────────────────
+function buildFlash(){
+  var mod=document.getElementById('m-flash');
+  var lv=1,pool=[],idx=0,phase='idle',tiv=null,tmax=0;
+  function getTime(word){if(lv===3)return 5;var len=word?word.length:4;if(lv===1)return Math.max(2,Math.round(0.8+len*0.35));return Math.max(2,Math.round(0.5+len*0.28));}
+  function stopT(){if(tiv){clearInterval(tiv);tiv=null;}}
+  function render(){
+    mod.innerHTML='<h2 class="stitle">⚡ Speed Flash<\/h2><p class="sdesc">A word flashes on screen. Read it aloud before time runs out — then 🎤 to check.<\/p>';
+    mod.appendChild(levelBar(lv,function(v){lv=v;stopT();phase='idle';render();}));
+    insertBanner(mod);
+    if(phase==='idle'){
+      mod.insertAdjacentHTML('beforeend',
+        '<div class="stage"><div class="stage-cyr" style="font-size:52px;color:rgba(255,255,255,.25)">⚡<\/div><div class="stage-sub">Press Start when ready<\/div><\/div>'+
+        '<div style="text-align:center;margin-top:8px"><button class="btn btn-ink" id="fls">Start<\/button><\/div>'+
+        '<div class="info-box" style="margin-top:14px">Each word shows for <strong>'+getTime()+'s<\/strong>. Read it aloud. When the timer ends, the mic appears.<\/div>'
+      );
+      document.getElementById('fls').onclick=function(){
+        var src=(lv===1?WL1:lv===2?WL2:WL3).slice();
+        pool=shuffle(src).slice(0,15);idx=0;startT();
+      };
+      return;
+    }
+    if(idx>=pool.length||phase==='done'){
+      mod.insertAdjacentHTML('beforeend','<div class="done-wrap"><div class="done-star">⚡<\/div><h3 class="done-title">Flash round done!<\/h3><p style="font-size:14px;color:var(--muted);margin-bottom:18px">'+pool.length+' words — '+(lv===1?'Beginner':lv===2?'Intermediate':'Advanced')+'.<\/p><button class="btn btn-ink" id="fla">Go again<\/button><\/div>');
+      document.getElementById('fla').onclick=function(){phase='idle';render();};
+      return;
+    }
+    var w=pool[idx];
+    mod.insertAdjacentHTML('beforeend',
+      '<div class="stage">'+
+        '<div class="ftbar-wrap"><div class="ftbar" id="ftb" style="width:100%"><\/div><\/div>'+
+        (phase==='show'
+          ?'<div class="stage-cyr" style="font-size:clamp(36px,9vw,68px);letter-spacing:2px">'+w.w+'<\/div>'
+          :'<div class="stage-cyr" style="font-size:68px;color:rgba(255,255,255,.12)">?<\/div>')+
+        '<div id="fr" style="min-height:26px;margin-top:4px"><\/div>'+
+        '<div class="stage-sub">'+(phase==='show'?'Read it aloud!':'Speak it into the mic ↓')+'<\/div>'+
+      '<\/div>'+
+      '<div class="controls" id="fc"><\/div>'+
+      '<div class="nav-row" style="margin-top:8px"><div class="nav-ctr">'+(idx+1)+' \/ '+pool.length+'<\/div><button class="btn btn-out btn-sm" id="fsk">Skip<\/button><\/div>'
+    );
+    if(phase==='speak'){
+      var ctrl=document.getElementById('fc');
+      ctrl.appendChild(hearBtn(w.w,0.75,'Hear'));
+      var rv=document.createElement('button');rv.className='hint-btn';rv.textContent='👁 Pronunciation';
+      rv.onclick=function(){document.getElementById('fr').innerHTML='<div class="stage-roman">'+w.r+'<\/div>';};
+      ctrl.appendChild(rv);
+      ctrl.appendChild(micWidget(w.w, function(){}, {roman: w.r}));
+    }
+    document.getElementById('fsk').onclick=function(){stopT();idx++;if(idx<pool.length){startT();}else{phase='done';render();}};
+  }
+  function stopT(){if(tiv){cancelAnimationFrame(tiv);tiv=null;}}
+  function startT(){
+    stopT();
+    var _w=pool[idx];tmax=getTime(_w?_w.w:'');phase='show';render();
+    var _t0=performance.now();
+    function tick(now){
+      var remaining=tmax-(now-_t0)/1000;
+      var f=document.getElementById('ftb');
+      if(f){
+        f.style.width=Math.max(0,remaining/tmax*100)+'%';
+        if(remaining<=2)f.classList.add('red');else f.classList.remove('red');
+      }
+      if(remaining<=0){tiv=null;phase='speak';render();return;}
+      tiv=requestAnimationFrame(tick);
+    }
+    tiv=requestAnimationFrame(tick);
+  }
+  render();
+}
+
+// ── M5 PHRASES ───────────────────────────────────────────────────────────────
+function buildPhrases(){
+  var mod=document.getElementById('m-phrases');
+  var lv=1,idx=0,showR=false;
+  var pool=shuffle(PL1.slice());
+  function rebuildPool(){pool=shuffle((lv===1?PL1:lv===2?PL2:PL3).slice());idx=0;}
+  function render(){
+    mod.innerHTML='<h2 class="stitle">📜 Phrase Reading<\/h2><p class="sdesc">Read the phrase aloud from the Cyrillic. Use the mic before revealing pronunciation.<\/p>';
+    mod.appendChild(levelBar(lv,function(v){lv=v;rebuildPool();showR=false;render();}));
+    insertBanner(mod);
+    if(idx>=pool.length)idx=0;
+    var ph=pool[idx];var pct=Math.round(idx/pool.length*100);
+    mod.insertAdjacentHTML('beforeend',
+      '<div class="pbar-wrap"><div class="pbar-fill" style="width:'+pct+'%"><\/div><\/div>'+
+      '<p class="ctr">'+(idx+1)+' \/ '+pool.length+'<\/p>'+
+      '<div class="stage">'+
+        '<div class="stage-cyr" style="font-size:clamp(20px,4.5vw,34px);line-height:1.4;padding:0 8px">'+ph.c+'<\/div>'+
+        (showR?'<div class="stage-roman" style="font-size:13px;line-height:1.5;margin-top:8px;letter-spacing:1px">'+ph.r+'<\/div>':'')+
+        '<div class="stage-en" style="margin-top:8px">'+ph.e+'<\/div>'+
+      '<\/div>'+
+      '<div class="controls" id="pc"><\/div>'+
+      '<div class="nav-row">'+
+        '<button class="btn btn-out btn-sm" id="pp">← Prev<\/button>'+
+        '<div class="nav-ctr">'+(idx+1)+'\/'+pool.length+'<\/div>'+
+        '<button class="btn btn-ink btn-sm" id="pn">Next →<\/button>'+
+      '<\/div>'
+    );
+    var ctrl=document.getElementById('pc');
+    ctrl.appendChild(hearBtn(ph.c,0.78,'Hear'));
+    if(lv>=2)ctrl.appendChild(hearBtn(ph.c,0.50,'Slowly'));
+    if(!showR){var rb=document.createElement('button');rb.className='hint-btn';rb.textContent='👁 Pronunciation';rb.onclick=function(){showR=true;render();};ctrl.appendChild(rb);}
+
+    // Score against romanization so the phonetically correct pronunciation
+    // (as spoken by the Hear button TTS) is the actual reference.
+    ctrl.appendChild(micWidget(ph.c, function(scorePct){
+      // Reveal romanization after scoring so user can see correct phonetics
+      if(!showR){
+        showR=true;
+        var stage=mod.querySelector('.stage');
+        if(stage&&!stage.querySelector('.stage-roman')){
+          var rd=document.createElement('div');
+          rd.className='stage-roman';
+          rd.style.cssText='font-size:13px;line-height:1.5;margin-top:8px;letter-spacing:1px';
+          rd.textContent=ph.r;
+          stage.appendChild(rd);
+        }
+      }
+      // Update nav counter
+      var ctr=mod.querySelector('.nav-ctr');
+      if(ctr){
+        var icon=scorePct>=80?'✓ ':scorePct>=50?'≈ ':'✗ ';
+        var col=scorePct>=80?'var(--green)':scorePct>=50?'var(--gold)':'var(--red)';
+        ctr.style.color=col;
+        ctr.textContent=icon+(idx+1)+'\/'+pool.length+' — '+scorePct+'%';
+      }
+    }, {roman: ph.r}));
+    document.getElementById('pp').disabled=idx===0;
+    document.getElementById('pp').onclick=function(){if(idx>0){idx--;showR=false;render();}};
+    document.getElementById('pn').onclick=function(){idx=(idx+1)%pool.length;if(idx===0){pool=shuffle((lv===1?PL1:lv===2?PL2:PL3).slice());}else{shuffleRemaining(pool,idx);}showR=false;render();};
+  }
+  render();
+}
+
+// ── M6 FLUENCY RUN ───────────────────────────────────────────────────────────
+function buildRun(){
+  var mod=document.getElementById('m-run');
+  var mode=null,items=[],idx=0,scores=[],streak=0,best=0;
+  var ultraMult=1,ultraCombo=0,ultraTimer=null;
+
+  // Passage state
+  var passagePick=null, passageLineIdx=0, passageScores=[];
+
+  function avg(){if(!scores.length)return 0;return Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);}
+  function stopTimer(){if(ultraTimer){clearInterval(ultraTimer);ultraTimer=null;}}
+
+  function render(){
+    mod.innerHTML='';
+    var bg=document.createElement('div');bg.className='run-bg';mod.appendChild(bg);
+    if(!mode){renderPicker(bg);}
+    else if(mode==='passage'){renderPassageMode(bg);}
+    else if(idx>=items.length){renderDone(bg);}
+    else{renderQ(bg);}
+  }
+
+  function renderPicker(bg){
+    bg.insertAdjacentHTML('beforeend',
+      '<div class="run-title">🔥 Fluency Run<\/div>'+
+      '<div class="run-sub">Advanced practice — no easy exercises here.<\/div>'+
+      '<div class="run-mgrid" id="rmg"><\/div>'
+    );
+    var g=document.getElementById('rmg');
+    [
+      {id:'hardwords', icon:'📖', label:'Hard Words',       desc:'WL3 — complex vocabulary, no hints.'},
+      {id:'advanced',  icon:'📜', label:'Advanced Phrases', desc:'PL3 — complex sentences, formal register.'},
+      {id:'literature',icon:'📚', label:'Literature Run',   desc:'Real sentences from Pushkin, Tolstoy, Dostoevsky and more. Timed.'},
+      {id:'passage',   icon:'📄', label:'Passage Reading',  desc:'Read a full literary excerpt line by line.'},
+      {id:'ultra',     icon:'💀', label:'ULTRA',            desc:'WL3 + PL3 + Literature interleaved. Timed. Combo multiplier.'},
+    ].forEach(function(m){
+      var c=document.createElement('div');
+      c.className='run-mc';
+      c.innerHTML='<div class="run-mc-icon">'+m.icon+'<\/div><div class="run-mc-label">'+m.label+'<\/div><div class="run-mc-desc">'+m.desc+'<\/div>';
+      c.onclick=function(){
+        stopTimer();
+        if(m.id==='passage'){mode='passage';passagePick=null;passageLineIdx=0;passageScores=[];render();return;}
+        mode=m.id;
+        if(m.id==='hardwords') items=shuffle(WL3.slice()).slice(0,100).map(function(w){return{c:w.w,r:w.r,e:w.e,t:'word',time:0};});
+        else if(m.id==='advanced') items=shuffle(PL3.slice()).slice(0,100).map(function(p){return{c:p.c,r:p.r,e:p.e,t:'phrase',time:0};});
+        else if(m.id==='literature') items=shuffle(HARD_SENTENCES).slice(0,100).map(function(s){return{c:s.c,r:s.r,e:s.e,t:'sentence',src:s.src,time:22};});
+        else if(m.id==='ultra') items=buildUltraItems();
+        idx=0;scores=[];streak=0;best=0;ultraMult=1;ultraCombo=0;
+        render();
+      };
+      g.appendChild(c);
+    });
+  }
+
+  function renderPassageMode(bg){
+    if(!passagePick && passagePick!==0){
+      bg.insertAdjacentHTML('beforeend',
+        '<div class="run-title">📄 Passage Reading<\/div>'+
+        '<div class="run-sub">Choose a text — read each line aloud.<\/div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px;margin-top:8px" id="plist"><\/div>'+
+        '<div style="margin-top:14px"><button class="btn-ghost" id="pback">← Back<\/button><\/div>'
+      );
+      var list=document.getElementById('plist');
+      PASSAGES.forEach(function(p,pi){
+        var btn=document.createElement('div');
+        btn.className='run-mc';
+        btn.innerHTML='<div class="run-mc-label">'+p.title+'<\/div><div class="run-mc-desc" style="color:rgba(255,165,40,.55)">'+p.author+' &nbsp;·&nbsp; '+p.lines.length+' lines<\/div>';
+        btn.onclick=function(){passagePick=pi;passageLineIdx=0;passageScores=[];render();};
+        list.appendChild(btn);
+      });
+      document.getElementById('pback').onclick=function(){mode=null;render();};
+      return;
+    }
+
+    var pass=PASSAGES[passagePick];
+
+    if(passageLineIdx>=pass.lines.length){
+      var a=passageScores.length?Math.round(passageScores.reduce(function(s,v){return s+v;},0)/passageScores.length):0;
+      var grd=a>=90?'S':a>=80?'A':a>=65?'B':a>=50?'C':'D';
+      var gc={S:'#ffd700',A:'#ff9040',B:'#6ddb88',C:'#aaa',D:'#ff7070'}[grd];
+      bg.insertAdjacentHTML('beforeend',
+        '<div style="text-align:center;padding:16px 0">'+
+        '<div style="font-size:10px;letter-spacing:3px;color:rgba(255,165,40,.5);margin-bottom:8px;text-transform:uppercase">Passage complete<\/div>'+
+        '<div style="font-family:Playfair Display,serif;font-size:70px;color:'+gc+';text-shadow:0 0 28px '+gc+'88;margin-bottom:4px">'+grd+'<\/div>'+
+        '<div style="color:var(--gl);font-size:22px;font-weight:600;margin-bottom:4px">'+a+'% average<\/div>'+
+        '<div style="color:rgba(255,255,255,.4);font-size:12px;margin-bottom:4px">'+pass.title+'<\/div>'+
+        '<div style="color:rgba(255,165,40,.5);font-size:11px;font-style:italic;margin-bottom:16px">'+pass.author+'<\/div>'+
+        '<div style="background:rgba(255,255,255,.04);border-radius:4px;padding:12px;margin-bottom:18px;text-align:left">'+
+        pass.lines.map(function(l,i){
+          var sc=passageScores[i]||0;
+          var col=sc>=80?'#6ddb88':sc>=50?'#ffc060':'#ff7070';
+          return '<div style="display:flex;gap:8px;align-items:baseline;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)">'+
+            '<span style="color:'+col+';font-size:11px;min-width:32px">'+sc+'%<\/span>'+
+            '<span style="color:rgba(255,255,255,.65);font-size:13px;font-family:Playfair Display,serif">'+l.c+'<\/span>'+
+            '<\/div>';
+        }).join('')+
+        '<\/div>'+
+        '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">'+
+          '<button class="btn btn-out" id="pb2">Choose passage<\/button>'+
+          '<button class="btn btn-red" id="pb3">Again 💀<\/button>'+
+        '<\/div><\/div>'
+      );
+      document.getElementById('pb2').onclick=function(){passagePick=null;passageLineIdx=0;passageScores=[];render();};
+      document.getElementById('pb3').onclick=function(){passageLineIdx=0;passageScores=[];render();};
+      return;
+    }
+
+    var line=pass.lines[passageLineIdx];
+    var pct=Math.round(passageLineIdx/pass.lines.length*100);
+    var dots=pass.lines.map(function(_,i){
+      if(i<passageLineIdx){var sc=passageScores[i]||0;return '<span style="color:'+(sc>=80?'#6ddb88':sc>=50?'#ffc060':'#ff7070')+'">●<\/span>';}
+      return '<span style="color:'+(i===passageLineIdx?'rgba(255,165,40,.8)':'rgba(255,255,255,.13)')+'">●<\/span>';
+    }).join('');
+
+    bg.insertAdjacentHTML('beforeend',
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+        '<div style="font-size:10px;color:rgba(255,165,40,.55);letter-spacing:1px">'+pass.author.toUpperCase()+'<\/div>'+
+        '<div class="run-num">'+(passageLineIdx+1)+'\/ '+pass.lines.length+'<\/div>'+
+      '<\/div>'+
+      '<div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:10px;line-height:1">'+dots+'<\/div>'+
+      '<div class="pbar-wrap"><div class="pbar-fill" style="width:'+pct+'%"><\/div><\/div>'+
+      '<div style="background:rgba(255,255,255,.04);border-radius:4px;padding:12px 14px;margin-bottom:14px;font-family:Playfair Display,serif;line-height:2;font-size:clamp(13px,3vw,16px)">'+
+      pass.lines.map(function(l,i){
+        if(i===passageLineIdx) return '<span style="color:#fff;font-size:clamp(15px,3.5vw,20px);text-shadow:0 0 12px rgba(200,146,42,.5)">'+l.c+'<\/span> ';
+        if(i<passageLineIdx){var sc=passageScores[i]||0;return '<span style="color:'+(sc>=80?'rgba(109,219,136,.5)':sc>=50?'rgba(255,192,96,.4)':'rgba(255,112,112,.4)')+'">'+l.c+'<\/span> ';}
+        return '<span style="color:rgba(255,255,255,.18)">'+l.c+'<\/span> ';
+      }).join('')+
+      '<\/div>'+
+      '<div id="pcontrols" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><\/div>'+
+      '<div id="pres"><\/div>'+
+      (line.e?transBox(line.e):'')+
+      '<div style="margin-top:8px"><button class="btn-ghost" id="pback2">← Passages<\/button><\/div>'
+    );
+
+    var ctrl=document.getElementById('pcontrols');
+    ctrl.appendChild(hearBtn(line.c,0.70,'Hear'));
+    ctrl.appendChild(hearBtn(line.c,0.48,'Slowly'));
+    var rv=document.createElement('button');rv.className='hint-btn';rv.textContent='👁 Romanization';
+    rv.onclick=function(){
+      var el=document.getElementById('prom');
+      if(el)el.innerHTML='<div style="font-size:12px;color:var(--gl);letter-spacing:.5px;margin-top:4px">'+line.r+'<\/div>';
+    };
+    ctrl.appendChild(rv);
+    var romDiv=document.createElement('div');romDiv.id='prom';ctrl.appendChild(romDiv);
+
+    ctrl.appendChild(micWidget(line.c,function(sc){
+      passageScores[passageLineIdx]=sc;
+      var res=document.getElementById('pres');if(!res)return;
+      var cls=sc>=80?'great':sc>=50?'close':'miss';
+      var icon=sc>=80?'✓':sc>=50?'≈':'✗';
+      res.innerHTML='<div class="run-result '+cls+'" style="text-align:center;padding:8px 12px">'+icon+' '+sc+'%<\/div>';
+      var nb=document.createElement('button');nb.className='run-next';
+      nb.textContent=passageLineIdx<pass.lines.length-1?'Next line →':'See results →';
+      nb.onclick=function(){passageLineIdx++;render();};
+      res.appendChild(nb);
+    }));
+
+    document.getElementById('pback2').onclick=function(){passagePick=null;passageLineIdx=0;passageScores=[];render();};
+  }
+
+  function renderQ(bg){
+    var it=items[idx];var a=avg();
+    var isTimed=(mode==='ultra'||mode==='literature');
+    var dots='';
+    for(var i=0;i<items.length;i++){
+      var col=i<idx?(scores[i]>=80?'#6ddb88':scores[i]>=50?'#ffc060':'#ff7070'):'rgba(255,255,255,.13)';
+      dots+='<span style="color:'+col+'">●<\/span>';
+    }
+    var typeLabels={word:'📖 WORD',phrase:'📜 PHRASE',sentence:'📚 SENTENCE'};
+    var _wlen=it.c.length;
+    var cySize=it.t==='sentence'?'clamp(14px,3.2vw,22px)':it.t==='phrase'?(_wlen<=40?'clamp(18px,4vw,30px)':'clamp(14px,3.2vw,22px)'):(_wlen<=6?'clamp(30px,7vw,52px)':_wlen<=10?'clamp(24px,5.5vw,44px)':_wlen<=15?'clamp(18px,4vw,34px)':'clamp(13px,3vw,22px)');
+    var sentSrc=it.src?'<div style="font-size:10px;color:rgba(180,60,255,.5);margin-top:6px;letter-spacing:1px;font-style:italic">'+it.src+'<\/div>':'';;
+    bg.insertAdjacentHTML('beforeend',
+      '<div class="run-hud">'+
+        '<div class="run-avg">'+(a?a+'% avg':'—')+'<\/div>'+
+        '<div class="run-streak">🔥 <strong>'+streak+'<\/strong>'+(isTimed&&ultraMult>1?' ×'+ultraMult:'')+'<\/div>'+
+        '<div class="run-num">'+(idx+1)+'\/ '+items.length+'<\/div>'+
+      '<\/div>'+
+      '<div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:12px;line-height:1">'+dots+'<\/div>'+
+      (isTimed?'<div class="ultra-timer-wrap"><div class="ultra-timer-bar" id="utb"><\/div><\/div>':'')+
+      '<div class="run-stage">'+
+        '<div class="run-tag">'+(typeLabels[it.t]||it.t.toUpperCase())+'<\/div>'+
+        '<div class="run-cyr" style="font-size:'+cySize+'">'+it.c+'<\/div>'+
+        (it.e&&it.t!=='sentence'?'<div class="stage-en" style="margin-top:6px;font-size:13px">'+it.e+'<\/div>':'')+
+        sentSrc+
+        (isTimed&&ultraMult>1?'<div style="color:var(--orange-l);font-size:12px;margin-top:4px">×'+ultraMult+' combo<\/div>':'')+
+        '<div id="rh" style="display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap"><\/div>'+
+        '<div id="rr2" style="min-height:16px;margin-top:4px"><\/div>'+
+      '<\/div>'+
+      '<div id="rm" style="margin-bottom:8px"><\/div>'+
+      '<div id="rres"><\/div>'+
+      (it.e?transBox(it.e):'')+
+      '<div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center">'+
+        '<button class="btn-ghost" id="rback">← Change mode<\/button>'+
+        '<button class="btn-ghost" id="rskip" style="color:rgba(255,255,255,.4)">Skip →<\/button>'+
+      '<\/div>'
+    );
+    var hr=document.getElementById('rh');
+    var rate=it.t==='sentence'?0.65:it.t==='phrase'?0.72:0.82;
+    hr.appendChild(hearBtn(it.c,rate,'Hear'));
+    if(it.t!=='word') hr.appendChild(hearBtn(it.c,0.48,'Slowly'));
+    var rv=document.createElement('button');rv.className='hint-btn';rv.textContent='👁 Pronunciation';
+    rv.onclick=function(){document.getElementById('rr2').innerHTML='<div style="font-size:12px;color:var(--gl);letter-spacing:.5px;line-height:1.5">'+it.r+'<\/div>';};
+    document.getElementById('rm').appendChild(rv);
+    document.getElementById('rm').appendChild(micWidget(it.c,function(pct){
+      stopTimer();
+      scores[idx]=pct;
+      var bonus=pct;
+      if(pct>=80){
+        streak++;ultraCombo++;
+        if(ultraCombo>=3)ultraMult=Math.min(5,1+Math.floor(ultraCombo/2));
+        bonus=Math.min(100,Math.round(pct*ultraMult));
+        if(streak>best)best=streak;
+        if(isTimed&&ultraMult>1)comboFlash('×'+ultraMult+'!');
+      } else {streak=0;ultraCombo=0;ultraMult=1;}
+      var res=document.getElementById('rres');if(!res)return;
+      var cls=pct>=80?'great':pct>=50?'close':'miss';
+      var icon=pct>=80?'✓':pct>=50?'≈':'✗';
+      var extra=isTimed&&pct>=80&&ultraMult>1?' (×'+ultraMult+' → '+bonus+'%!)':'';;
+      res.innerHTML='<div class="run-result '+cls+'">'+icon+' '+pct+'%'+extra+'<\/div>';
+      var nb=document.createElement('button');nb.className='run-next';
+      nb.textContent=idx<items.length-1?'Next →':'See results →';
+      nb.onclick=function(){idx++;render();};
+      res.appendChild(nb);
+    }));
+    document.getElementById('rback').onclick=function(){stopTimer();mode=null;render();};
+    document.getElementById('rskip').onclick=function(){stopTimer();streak=0;ultraCombo=0;ultraMult=1;idx++;render();};
+    if(isTimed) setTimeout(function(){startTimer(it.time||18);},300);
+  }
+
+  function startTimer(sec){
+    stopTimer();
+    var s=sec;
+    var fill=document.getElementById('utb');
+    if(fill){fill.style.width='100%';fill.classList.remove('warn');}
+    ultraTimer=setInterval(function(){
+      s--;
+      var fill=document.getElementById('utb');
+      if(fill){fill.style.width=Math.max(0,s/sec*100)+'%';if(s<=5)fill.classList.add('warn');}
+      if(s<=0){
+        stopTimer();
+        scores[idx]=0;streak=0;ultraCombo=0;ultraMult=1;
+        var res=document.getElementById('rres');
+        if(res){
+          res.innerHTML='<div class="run-result miss">⏰ Time up! — <em style="font-size:11px">'+items[idx].r+'<\/em><\/div>';
+          var nb=document.createElement('button');nb.className='run-next';
+          nb.textContent=idx<items.length-1?'Next →':'See results →';
+          nb.onclick=function(){idx++;render();};
+          res.appendChild(nb);
+        }
+      }
+    },1000);
+  }
+
+  function renderDone(bg){
+    stopTimer();
+    var a=avg();
+    var grd=a>=90?'S':a>=80?'A':a>=65?'B':a>=50?'C':'D';
+    var gc={S:'#ffd700',A:'#ff9040',B:'#6ddb88',C:'#aaa',D:'#ff7070'}[grd];
+    var perf=scores.filter(function(s){return s>=80;}).length;
+    var msg=a>=90?'LEGENDARY 💀🔥':a>=80?'Excellent!':a>=65?'Solid!':a>=50?'Keep grinding!':'Back to basics.';
+    bg.insertAdjacentHTML('beforeend',
+      '<div style="text-align:center;padding:12px 0">'+
+      '<div style="font-size:10px;letter-spacing:3px;color:rgba(180,60,255,.6);margin-bottom:8px;text-transform:uppercase">Run complete<\/div>'+
+      '<div class="run-grade" style="color:'+gc+';text-shadow:0 0 30px '+gc+'88;font-size:80px">'+grd+'<\/div>'+
+      '<div class="run-final-score" style="color:var(--gl)">'+a+'% average<\/div>'+
+      '<div class="run-final-sub">'+perf+' \/ '+items.length+' above 80%'+(best?' &nbsp;·&nbsp; Best streak: '+best:'')+'<\/div>'+
+      '<div style="color:'+gc+';font-size:14px;margin-bottom:20px">'+msg+'<\/div>'+
+      '<div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">'+
+        '<button class="btn btn-out" id="rdp">Change mode<\/button>'+
+        '<button class="btn btn-red" id="rda">Run again 💀<\/button>'+
+      '<\/div><\/div>'
+    );
+    document.getElementById('rdp').onclick=function(){mode=null;render();};
+    document.getElementById('rda').onclick=function(){
+      if(mode==='ultra')items=buildUltraItems();
+      idx=0;scores=[];streak=0;best=0;ultraMult=1;ultraCombo=0;render();
+    };
+  }
+
+  function comboFlash(txt){
+    var el=document.createElement('div');el.className='combo-flash';el.textContent=txt;
+    document.body.appendChild(el);
+    setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},850);
+  }
+
+  render();
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+var BUILDERS={letters:buildLetters,syllables:buildSyllables,words:buildWords,flash:buildFlash,phrases:buildPhrases,run:buildRun};
+showTab('letters');
+</script>
+</body>
+</html>
+
